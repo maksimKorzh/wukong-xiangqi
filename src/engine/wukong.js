@@ -70,6 +70,15 @@ var Engine = function() {
       'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx'
     ];
     
+    
+    /****************************\
+     ============================
+   
+            BOARD VARIABLES
+
+     ============================              
+    \****************************/
+    
     /*
         PABNCRK      pabncrk
         兵仕相傌炮俥帥  卒士象馬炮車將
@@ -93,14 +102,111 @@ var Engine = function() {
         x x x x x x x x x x x
     */
     
+    // xiangqi board
+    var board = new Array(11 * 14);
+    
+    // side to move
+    var side = RED;
+    
+    // 60 moves draw rule counter
+    var sixty = 0;
+    
+    // squares occupied by kings
+    var kingSquare = [0, 0];
+    
+    
+    /****************************\
+     ============================
+   
+             BOARD METHODS
+
+     ============================              
+    \****************************/
+    
+    // reset board array and game state variables
+    function resetBoard() {
+      // reset board position
+      for (let rank = 0; rank < 14; rank++) {
+        for (let file = 0; file < 11; file++) {
+          let square = rank * 11 + file;
+          if (coordinates[square] != 'xx') board[square] = EMPTY;
+          else board[square] = OFFBOARD;
+        }
+      }
+      
+      // reset game state variables
+      side = RED;
+      sixty = 0;
+      kingSquare = [0, 0];
+    }
+    
+    
+    /****************************\
+     ============================
+     
+            INPUT & OUTPUT
+            
+     ============================              
+    \****************************/
+    
+    const asciiPieces = ['.', 'P', 'A', 'B', 'N', 'C', 'R', 'K', 'p', 'a', 'b', 'n', 'c', 'r', 'k'];
+    
+    function printBoard() {
+      let boardString = '';
+      
+      // print board position
+      for (let rank = 0; rank < 14; rank++) {
+        for (let file = 0; file < 11; file++) {
+          let square = rank * 11 + file;
+
+          if (coordinates[square] != 'xx') {
+            if (file == 1) boardString += 11 - rank + '  ';
+            boardString += asciiPieces[board[square]] + ' ';
+
+          }
+        }
+        
+        if (rank < 13) boardString += '\n';
+      }
+      
+      boardString += '   a b c d e f g h i\n\n'
+      console.log(boardString);
+    }
+    
+    
+    /****************************\
+     ============================
+   
+                 INIT
+
+     ============================              
+    \****************************/
+    
+    // init engine
+    (function initAll() {
+      
+    }());
+    
+    
+    /****************************\
+     ============================
+   
+                 DEBUG
+
+     ============================              
+    \****************************/
+    
     // debug engine
     function debug() {
-      console.log(a9);
-      console
-      console.log(coordinates[a9]);
-      console.log(coordinates[i9]);
-      console.log(coordinates[a0]);
-      console.log(coordinates[i0]);
+      resetBoard();
+      
+      board[a0] = WHITE_ROOK;
+      board[b0] = WHITE_KNIGHT;
+      board[h0] = WHITE_KNIGHT;
+      board[i0] = WHITE_ROOK;
+      
+      printBoard();
+      
     }
     
     return {
