@@ -24,13 +24,13 @@ var Engine = function() {
     
     // piece encoding
     const EMPTY = 0;
-    const WHITE_PAWN = 1;
-    const WHITE_ADVISOR = 2;
-    const WHITE_BISHOP = 3;
-    const WHITE_KNIGHT = 4;
-    const WHITE_CANON = 5;
-    const WHITE_ROOK = 6;
-    const WHITE_KING = 7;
+    const RED_PAWN = 1;
+    const RED_ADVISOR = 2;
+    const RED_BISHOP = 3;
+    const RED_KNIGHT = 4;
+    const RED_CANON = 5;
+    const RED_ROOK = 6;
+    const RED_KING = 7;
     const BLACK_PAWN = 8;
     const BLACK_ADVISOR = 9;
     const BLACK_BISHOP = 10;
@@ -89,9 +89,9 @@ var Engine = function() {
         x x x x x x x x x x x
         x x x x x x x x x x x
         x r n b a k a b n r x
+        x . . . . . . . . . x
         x . c . . . . . c . x
         x p . p . p . p . p x
-        x . . . . . . . . . x
         x . . . . . . . . . x
         x . . . . . . . . . x
         x P . P . P . P . P x
@@ -149,8 +149,68 @@ var Engine = function() {
      ============================              
     \****************************/
     
+    // encode ascii pieces
+    var charPieces = {
+      'P': RED_PAWN,
+      'A': RED_ADVISOR,
+      'B': RED_BISHOP,
+      'N': RED_KNIGHT,
+      'C': RED_CANON,
+      'R': RED_ROOK,
+      'K': RED_KING,
+      'p': BLACK_PAWN,
+      'a': BLACK_ADVISOR,
+      'b': BLACK_BISHOP,
+      'n': BLACK_KNIGHT,
+      'c': BLACK_CANON,
+      'r': BLACK_ROOK,
+      'k': BLACK_KING
+    };
+  
+    // ascii character piece representation
     const asciiPieces = ['.', 'P', 'A', 'B', 'N', 'C', 'R', 'K', 'p', 'a', 'b', 'n', 'c', 'r', 'k'];
     
+    // set board position from FEN string
+    function setBoard(fen) {
+      resetBoard();
+      var index = 0;
+      
+      // parse position
+      for (let rank = 0; rank < 14; rank++) {
+        for (let file = 0; file < 11; file++) {
+          let square = rank * 11 + file;
+          
+          if (coordinates[square] != 'xx') {
+            // parse pieces
+            if ((fen[index].charCodeAt() >= 'a'.charCodeAt() &&
+                 fen[index].charCodeAt() <= 'z'.charCodeAt()) || 
+                (fen[index].charCodeAt() >= 'A'.charCodeAt() &&
+                 fen[index].charCodeAt() <= 'Z'.charCodeAt())) {
+              if (fen[index] == 'K') kingSquare[RED] = square;
+              else if (fen[index] == 'k') kingSquare[BLACK] = square;
+              board[square] = charPieces[fen[index]];
+              index++;
+            }
+            
+            // parse empty squares
+            if (fen[index].charCodeAt() >= '0'.charCodeAt() &&
+                fen[index].charCodeAt() <= '9'.charCodeAt()) {
+              var offset = fen[index] - '0';
+              if (board[square] == EMPTY) file--;
+              file += offset;
+              index++;
+            }
+            if (fen[index] == '/') index++;
+          }
+        }
+      }
+      
+      // parse side to move
+      index++;
+      side = (fen[index] == 'b') ? BLACK : RED;
+    }
+    
+    // print board to console
     function printBoard() {
       let boardString = '';
       
@@ -170,6 +230,9 @@ var Engine = function() {
       }
       
       boardString += '   a b c d e f g h i\n\n'
+      boardString += '   side:           ' + ((side == RED) ? 'r' : 'b') + '\n';
+      boardString += '   king squares:  [' + coordinates[kingSquare[RED]] + ', ' +
+                                             coordinates[kingSquare[BLACK]] + ']\n'
       console.log(boardString);
     }
     
@@ -198,13 +261,7 @@ var Engine = function() {
     
     // debug engine
     function debug() {
-      resetBoard();
-      
-      board[a0] = WHITE_ROOK;
-      board[b0] = WHITE_KNIGHT;
-      board[h0] = WHITE_KNIGHT;
-      board[i0] = WHITE_ROOK;
-      
+      setBoard(START_FEN);
       printBoard();
       
     }
