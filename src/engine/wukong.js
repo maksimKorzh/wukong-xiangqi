@@ -21,6 +21,7 @@ var Engine = function() {
     // sides to move
     const RED = 0;
     const BLACK = 1;
+    const NO_COLOR = 2;
     
     // piece encoding
     const EMPTY = 0;
@@ -38,7 +39,30 @@ var Engine = function() {
     const BLACK_CANON = 12;
     const BLACK_ROOK = 13;
     const BLACK_KING = 14;
-    const OFFBOARD = 15;    
+    const OFFBOARD = 15;
+    
+    // piece types
+    const PAWN = 16;
+    const ADVISOR = 17;
+    const BISHOP = 18;
+    const KNIGHT = 19;
+    const CANON = 20;
+    const ROOK = 21;
+    const KING = 22;
+    
+    // map type to piece
+    const PIECE_TYPE = [
+      0, 
+      PAWN, ADVISOR, BISHOP, KNIGHT, CANON, ROOK, KING,
+      PAWN, ADVISOR, BISHOP, KNIGHT, CANON, ROOK, KING
+    ];
+    
+    // map color to piece
+    const PIECE_COLOR = [
+      NO_COLOR,
+      RED, RED, RED, RED, RED, RED, RED,
+      BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK
+    ];  
     
     // square encoding
     const A9 = 23, B9 = 24, C9 = 25, D9 = 26, E9 = 27, F9 = 28, G9 = 29, H9 = 30, I9 = 31;
@@ -269,40 +293,22 @@ var Engine = function() {
       [RIGHT + RIGHT + DOWN, DOWN + DOWN + RIGHT]
     ];
     
-    /*const KNIGHT_MOVE_OFFSETS = [
+    // offsets to get attacks by pawns
+    const PAWN_MOVE_OFFSETS = [
+      [UP, LEFT, RIGHT],
+      [DOWN, LEFT, RIGHT]
+    ];
+    
+    // offsets to get target squares for knights
+    const KNIGHT_MOVE_OFFSETS = [
       [LEFT + LEFT + UP, LEFT + LEFT + DOWN],
       [RIGHT + RIGHT + UP, RIGHT + RIGHT + DOWN],
       [UP + UP + LEFT, UP + UP + RIGHT],
       [DOWN + DOWN + LEFT, DOWN + DOWN + RIGHT]
     ];
     
-    const BISHOP_OFFSETS = [(UP + LEFT) * 2, (UP + RIGHT) * 2, (DOWN + LEFT) * 2, (DOWN + RIGHT) * 2];
-    */
-    
-    const ROOK_OFFSETS = ORTHOGONALS;
-    const KING_OFFSETS = ORTHOGONALS;
-    
-    // print board to console
-    function printAttacks(color) {
-      let boardString = '';
-      
-      // print board position
-      for (let rank = 0; rank < 14; rank++) {
-        for (let file = 0; file < 11; file++) {
-          let square = rank * 11 + file;
-
-          if (COORDINATES[square] != 'xx') {
-            if (file == 1) boardString += '   ';
-            boardString += (isSquareAttacked(square, color) ? 'x ' : '. ');
-
-          }
-        }
-        
-        if (rank < 13) boardString += '\n';
-      }
-      
-      console.log(boardString);
-    }
+    // offsets to get target squares for bishops
+    const BISHOP_MOVE_OFFSETS = [(UP + LEFT) * 2, (UP + RIGHT) * 2, (DOWN + LEFT) * 2, (DOWN + RIGHT) * 2];
     
     // square attacked by the given side
     function isSquareAttacked(square, color) {
@@ -351,6 +357,153 @@ var Engine = function() {
     /****************************\
      ============================
    
+            MOVE GENERATOR
+
+     ============================              
+    \****************************/
+    
+    // zones of xiangqi board
+    const BOARD_ZONES = [
+      [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 2, 2, 2, 1, 1, 1, 0,
+        0, 1, 1, 1, 2, 2, 2, 1, 1, 1, 0,
+        0, 1, 1, 1, 2, 2, 2, 1, 1, 1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ],
+      [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 1, 2, 2, 2, 1, 1, 1, 0,
+        0, 1, 1, 1, 2, 2, 2, 1, 1, 1, 0,
+        0, 1, 1, 1, 2, 2, 2, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ]
+    ];
+    
+    // push move into move list
+    function pushMove(sourceSquare, targetSquare, sourcePiece, targetPiece) {
+      if (targetPiece == EMPTY || PIECE_COLOR[targetPiece] == side ^ 1) {
+        if (targetPiece)
+          console.log(COORDINATES[sourceSquare], COORDINATES[targetSquare], 'capture');
+        else
+          console.log(COORDINATES[sourceSquare], COORDINATES[targetSquare]);
+      }
+    }
+    
+    // generate pseudo legal moves
+    function generateMoves() {
+      for (let sourceSquare = 0; sourceSquare < board.length; sourceSquare++) {
+        if (board[sourceSquare] != OFFBOARD) {
+          let piece = board[sourceSquare];
+          let pieceType = PIECE_TYPE[piece];
+          let pieceColor = PIECE_COLOR[piece];
+          
+          if (pieceColor == side) {
+            // pawns
+            if (pieceType == PAWN) {
+              for (let direction = 0; direction < PAWN_MOVE_OFFSETS[side].length; direction++) {
+                let targetSquare = sourceSquare + PAWN_MOVE_OFFSETS[side][direction];
+                let targetPiece = board[targetSquare];
+                
+                if (targetPiece != OFFBOARD) pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                if (BOARD_ZONES[side][sourceSquare]) break; 
+              }
+            }
+            
+            // kings & advisors
+            if (pieceType == KING || pieceType == ADVISOR) {
+              for (let direction = 0; direction < ORTHOGONALS.length; direction++) {
+                let offsets = (pieceType == KING) ? ORTHOGONALS : DIAGONALS;
+                let targetSquare = sourceSquare + offsets[direction];
+                let targetPiece = board[targetSquare];
+                
+                if (BOARD_ZONES[side][targetSquare] == 2) pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+              }
+            }
+            
+            // bishops
+            if (pieceType == BISHOP) {
+              for (let direction = 0; direction < BISHOP_MOVE_OFFSETS.length; direction++) {
+                let targetSquare = sourceSquare + BISHOP_MOVE_OFFSETS[direction];
+                let targetPiece = board[targetSquare];
+                
+                if (BOARD_ZONES[side][targetSquare]) pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+              }
+            }
+            
+            // knights
+            if (pieceType == KNIGHT) {
+              for (let direction = 0; direction < ORTHOGONALS.length; direction++) {
+                let targetDirection = sourceSquare + ORTHOGONALS[direction];
+          
+                if (board[targetDirection] == EMPTY) {
+                  for (let offset = 0; offset < 2; offset++) {
+                    let targetSquare = sourceSquare + KNIGHT_MOVE_OFFSETS[direction][offset];
+                    let targetPiece = board[targetSquare];
+                    
+                    if (targetPiece != OFFBOARD) pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                  }
+                }
+              }
+            }
+            
+            // rooks & canons
+            if (pieceType == ROOK || pieceType == CANON) {
+              for (let direction = 0; direction < ORTHOGONALS.length; direction++) {
+                let targetSquare = sourceSquare + ORTHOGONALS[direction];
+                let jumpOver = 0;
+                
+                while (board[targetSquare] != OFFBOARD) {
+                  let targetPiece = board[targetSquare];
+                  
+                  if (jumpOver == 0) {
+                    // all rook moves
+                    if (pieceType == ROOK && PIECE_COLOR[targetPiece] == side ^ 1)
+                      pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                    
+                    // quiet canon moves
+                    else if (pieceType == CANON && targetPiece == EMPTY)
+                      pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                  }
+
+                  if (targetPiece) jumpOver++;
+                  if (pieceType == CANON && PIECE_COLOR[targetPiece] == side ^ 1 && jumpOver == 2) {
+                    // capture canon moves
+                    pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                    break;
+                  }
+
+                  targetSquare += ORTHOGONALS[direction];
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    
+    /****************************\
+     ============================
+   
                  INIT
 
      ============================              
@@ -372,14 +525,9 @@ var Engine = function() {
     
     // debug engine
     function debug() {
-      //setBoard(START_FEN);
-      setBoard('9/9/9/9/9/9/9/9/9/9 w - - 0 1');
-      //board[D5] = RED_PAWN
-      board[E1] = BLACK_PAWN;
-      
+      setBoard(START_FEN);
       printBoard();
-      printAttacks(BLACK);
-      
+      generateMoves();
     }
     
     return {
