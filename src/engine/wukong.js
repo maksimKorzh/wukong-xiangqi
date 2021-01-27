@@ -324,7 +324,7 @@ var Engine = function() {
         }
       }
       
-      // by king, rooks & canons
+      // by king, rooks & cannons
       for (let direction = 0; direction < ORTHOGONALS.length; direction++) {
         let directionTarget = square + ORTHOGONALS[direction];
         let jumpOver = 0;
@@ -465,7 +465,7 @@ var Engine = function() {
               }
             }
             
-            // rooks & canons
+            // rooks & cannons
             if (pieceType == ROOK || pieceType == CANNON) {
               for (let direction = 0; direction < ORTHOGONALS.length; direction++) {
                 let targetSquare = sourceSquare + ORTHOGONALS[direction];
@@ -479,14 +479,14 @@ var Engine = function() {
                     if (pieceType == ROOK && PIECE_COLOR[targetPiece] == side ^ 1)
                       pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
                     
-                    // quiet canon moves
+                    // quiet cannon moves
                     else if (pieceType == CANNON && targetPiece == EMPTY)
                       pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
                   }
 
                   if (targetPiece) jumpOver++;
                   if (pieceType == CANNON && PIECE_COLOR[targetPiece] == side ^ 1 && jumpOver == 2) {
-                    // capture canon moves
+                    // capture cannon moves
                     pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
                     break;
                   }
