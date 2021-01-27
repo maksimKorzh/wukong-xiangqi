@@ -29,14 +29,14 @@ var Engine = function() {
     const RED_ADVISOR = 2;
     const RED_BISHOP = 3;
     const RED_KNIGHT = 4;
-    const RED_CANON = 5;
+    const RED_CANNON = 5;
     const RED_ROOK = 6;
     const RED_KING = 7;
     const BLACK_PAWN = 8;
     const BLACK_ADVISOR = 9;
     const BLACK_BISHOP = 10;
     const BLACK_KNIGHT = 11;
-    const BLACK_CANON = 12;
+    const BLACK_CANNON = 12;
     const BLACK_ROOK = 13;
     const BLACK_KING = 14;
     const OFFBOARD = 15;
@@ -46,15 +46,15 @@ var Engine = function() {
     const ADVISOR = 17;
     const BISHOP = 18;
     const KNIGHT = 19;
-    const CANON = 20;
+    const CANNON = 20;
     const ROOK = 21;
     const KING = 22;
     
     // map type to piece
     const PIECE_TYPE = [
       0, 
-      PAWN, ADVISOR, BISHOP, KNIGHT, CANON, ROOK, KING,
-      PAWN, ADVISOR, BISHOP, KNIGHT, CANON, ROOK, KING
+      PAWN, ADVISOR, BISHOP, KNIGHT, CANNON, ROOK, KING,
+      PAWN, ADVISOR, BISHOP, KNIGHT, CANNON, ROOK, KING
     ];
     
     // map color to piece
@@ -179,14 +179,14 @@ var Engine = function() {
       'A': RED_ADVISOR,
       'B': RED_BISHOP, 'E': RED_BISHOP,
       'N': RED_KNIGHT, 'H': RED_BISHOP,
-      'C': RED_CANON,
+      'C': RED_CANNON,
       'R': RED_ROOK,
       'K': RED_KING,
       'p': BLACK_PAWN,
       'a': BLACK_ADVISOR,
       'b': BLACK_BISHOP, 'e': BLACK_BISHOP,
       'n': BLACK_KNIGHT, 'h': BLACK_KNIGHT,
-      'c': BLACK_CANON,
+      'c': BLACK_CANNON,
       'r': BLACK_ROOK,
       'k': BLACK_KING
     };
@@ -337,7 +337,7 @@ var Engine = function() {
           }
 
           if (board[directionTarget] != EMPTY) jumpOver++;
-          if (jumpOver == 2 && board[directionTarget] == ((color == RED) ? RED_CANON : BLACK_CANON))
+          if (jumpOver == 2 && board[directionTarget] == ((color == RED) ? RED_CANNON : BLACK_CANNON))
             return 1;
           
           directionTarget += ORTHOGONALS[direction];
@@ -466,7 +466,7 @@ var Engine = function() {
             }
             
             // rooks & canons
-            if (pieceType == ROOK || pieceType == CANON) {
+            if (pieceType == ROOK || pieceType == CANNON) {
               for (let direction = 0; direction < ORTHOGONALS.length; direction++) {
                 let targetSquare = sourceSquare + ORTHOGONALS[direction];
                 let jumpOver = 0;
@@ -480,12 +480,12 @@ var Engine = function() {
                       pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
                     
                     // quiet canon moves
-                    else if (pieceType == CANON && targetPiece == EMPTY)
+                    else if (pieceType == CANNON && targetPiece == EMPTY)
                       pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
                   }
 
                   if (targetPiece) jumpOver++;
-                  if (pieceType == CANON && PIECE_COLOR[targetPiece] == side ^ 1 && jumpOver == 2) {
+                  if (pieceType == CANNON && PIECE_COLOR[targetPiece] == side ^ 1 && jumpOver == 2) {
                     // capture canon moves
                     pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
                     break;
