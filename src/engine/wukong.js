@@ -443,9 +443,10 @@ var Engine = function() {
             if (pieceType == BISHOP) {
               for (let direction = 0; direction < BISHOP_MOVE_OFFSETS.length; direction++) {
                 let targetSquare = sourceSquare + BISHOP_MOVE_OFFSETS[direction];
+                let jumpOver = sourceSquare + DIAGONALS[direction];
                 let targetPiece = board[targetSquare];
                 
-                if (BOARD_ZONES[side][targetSquare]) pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                if (BOARD_ZONES[side][targetSquare] && board[jumpOver] == EMPTY) pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
               }
             }
             
@@ -485,7 +486,7 @@ var Engine = function() {
                   }
 
                   if (targetPiece) jumpOver++;
-                  if (pieceType == CANNON && PIECE_COLOR[targetPiece] == side ^ 1 && jumpOver == 2) {
+                  if (targetPiece && pieceType == CANNON && PIECE_COLOR[targetPiece] == side ^ 1 && jumpOver == 2) {
                     // capture cannon moves
                     pushMove(sourceSquare, targetSquare, board[sourceSquare], targetPiece);
                     break;
@@ -525,9 +526,12 @@ var Engine = function() {
     
     // debug engine
     function debug() {
-      setBoard(START_FEN);
+      //setBoard(START_FEN);
+      
+      setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
       printBoard();
       generateMoves();
+
     }
     
     return {
