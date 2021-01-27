@@ -634,6 +634,96 @@ var Engine = function() {
     /****************************\
      ============================
    
+                 PERFT
+
+     ============================              
+    \****************************/
+    
+    /*
+      rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1
+      depth       nodes    checks    captures
+          1          44         0           2
+          2        1920         6          72
+          3       79666       384        3159
+          4     3290240     19380      115365
+          5   133312995    953251     4917734  
+          6  5392831844
+
+
+      r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1
+      depth       nodes    checks    captures
+          1          38         1           1
+          2        1128        12          10
+          3       43929      1190        2105
+          4     1339047     21299       31409
+          5    53112976   1496697     3262495
+    */
+    
+    // perft driver
+    function perftDriver(depth) {
+      if  (depth == 0) { nodes++; return; }
+      
+      let moveList = generateMoves();
+      
+      for (var count = 0; count < moveList.length; count++) {      
+        if (!makeMove(moveList[count].move)) continue;
+        perftDriver(depth - 1);      
+        takeBack();
+      }
+    }
+    
+    // perft test
+    function perftTest(depth) {
+      nodes = 0;
+      console.log('   Performance test:\n');
+      resultString = '';
+      let startTime = Date.now();
+      
+      let moveList = generateMoves();
+      
+      for (var count = 0; count < moveList.length; count++) {
+        if (makeMove(moveList[count].move) == 0) continue;
+        let cumNodes = nodes;
+        perftDriver(depth - 1);
+        takeBack();
+        let oldNodes = nodes - cumNodes;
+        console.log(  '   move' +
+                      ' ' + (count + 1) + ((count < 9) ? ':  ': ': ') +
+                      COORDINATES[getSourceSquare(moveList[count].move)] +
+                      COORDINATES[getTargetSquare(moveList[count].move)] +
+                      '    nodes: ' + oldNodes);
+      }
+      
+      resultString += '\n   Depth: ' + depth;
+      resultString += '\n   Nodes: ' + nodes;
+      resultString += '\n    Time: ' + (Date.now() - startTime) + ' ms\n';
+      console.log(resultString);
+    }
+
+    /****************************\
+     ============================
+   
+              EVALUATION
+
+     ============================              
+    \****************************/
+
+
+    /****************************\
+     ============================
+   
+                SEARCH
+
+     ============================              
+    \****************************/
+    
+    // visited nodes count
+    var nodes = 0;
+    
+    
+    /****************************\
+     ============================
+   
                  INIT
 
      ============================              
@@ -655,15 +745,10 @@ var Engine = function() {
     
     // debug engine
     function debug() {
-      setBoard(START_FEN);
-      
-      //setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
+      //setBoard(START_FEN);
+      setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
       printBoard();
-      let moves = generateMoves();
-      makeMove(moves[0].move);
-      printBoard();
-      takeBack();
-      printBoard();
+      perftTest(4);
 
     }
     
@@ -682,26 +767,6 @@ var Engine = function() {
       
     }
 }
-
-
-/*
-let ranks = ['x', 'x', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', 'x', 'x'];
-let files = ['x', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'x'];
-
-let str = '';
-
-for (let rank = 0; rank < 14; rank++) {
-  for (let file = 0; file < 11; file++) {
-    let square = rank * 11 + file;
-    str += files[file] + ranks[rank] + " = " + square + ', ';
-  }
-  
-  str += '\n'
-}
-
-console.log(str);
-*/
-
 
 
 
