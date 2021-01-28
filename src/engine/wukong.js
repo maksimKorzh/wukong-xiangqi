@@ -221,7 +221,7 @@ var Engine = function() {
       
       // hash board position
       for (var square = 0; square < board.length; square++) {
-        if (COORDINATES[square] != 'xx') {
+        if (board[square] != OFFBOARD) {
           let piece = board[square];
           if (piece != EMPTY) finalKey ^= pieceKeys[(piece * board.length) + square];
         }
@@ -273,7 +273,7 @@ var Engine = function() {
         for (let file = 0; file < 11; file++) {
           let square = rank * 11 + file;
           
-          if (COORDINATES[square] != 'xx') {
+          if (board[square] != OFFBOARD) {
             // parse pieces
             if ((fen[index].charCodeAt() >= 'a'.charCodeAt() &&
                  fen[index].charCodeAt() <= 'z'.charCodeAt()) || 
@@ -315,7 +315,7 @@ var Engine = function() {
         for (let file = 0; file < 11; file++) {
           let square = rank * 11 + file;
 
-          if (COORDINATES[square] != 'xx') {
+          if (board[square] != OFFBOARD) {
             if (file == 1) boardString += 11 - rank + '  ';
             boardString += PIECE_TO_CHAR[board[square]] + ' ';
 
@@ -641,10 +641,11 @@ var Engine = function() {
       // moveStack board state variables
       moveStack.push({
         move: move,
-        //side: side,
+        hashKey: hashKey,
         sixty: sixty
       });
-    
+      
+      // parse move
       let sourceSquare = getSourceSquare(move);
       let targetSquare = getTargetSquare(move);
       let sourcePiece = getSourcePiece(move);
@@ -655,7 +656,14 @@ var Engine = function() {
       board[targetSquare] = sourcePiece;
       board[sourceSquare] = EMPTY;
       
-      if (captureFlag) sixty = 0;
+      // hash piece
+      hashKey ^= pieceKeys[sourcePiece * board.length + sourceSquare];
+      hashKey ^= pieceKeys[sourcePiece * board.length + targetSquare];
+      
+      if (captureFlag) {
+        sixty = 0;
+        hashKey ^= pieceKeys[targetPiece * board.length + targetSquare];
+      }
       else sixty++;
 
       // update king square
@@ -664,6 +672,7 @@ var Engine = function() {
       
       // switch side to move
       side ^= 1;
+      hashKey ^= sideKey;
 
       // return illegal move if king is left in check 
       if (isSquareAttacked(kingSquare[side ^ 1], side)) {
@@ -699,6 +708,7 @@ var Engine = function() {
       side ^= 1;
            
       sixty = moveStack[moveIndex].sixty;
+      hashKey = moveStack[moveIndex].hashKey;
       moveStack.pop();
     }
     
@@ -816,10 +826,10 @@ var Engine = function() {
     
     // debug engine
     function debug() {
-      setBoard(START_FEN);
-      //setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
+      //setBoard(START_FEN);
+      setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
       printBoard();
-      perftTest(4);
+      perftTest(3);
     }
     
     return {
