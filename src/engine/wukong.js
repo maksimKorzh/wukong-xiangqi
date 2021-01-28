@@ -344,6 +344,67 @@ var Engine = function() {
       console.log(boardString);
     }
     
+    // validate move
+    function moveFromString(moveString) {
+      let moveList = generateMoves(ALL_MOVES);
+
+      // parse move string
+      var sourceSquare = (11 - (moveString[1].charCodeAt() - '0'.charCodeAt())) * 11 + (moveString[0].charCodeAt() - 'a'.charCodeAt() + 1);
+      var targetSquare = (11 - (moveString[3].charCodeAt() - '0'.charCodeAt())) * 11 + (moveString[2].charCodeAt() - 'a'.charCodeAt() + 1);
+
+      // validate
+      for(var count = 0; count < moveList.length; count++) {
+        var move = moveList[count].move;
+        var promotedPiece = 0;
+
+        if(getSourceSquare(move) == sourceSquare && getTargetSquare(move) == targetSquare) {
+          // legal move
+          return move;
+        }
+      }
+
+      // illegal move
+      return 0;
+    }
+    
+    // load move sequence
+    function loadMoves(moves) {
+      moves = moves.split(' ');
+      
+      for (let index = 0; index < moves.length; index++) {
+        let move = moves[index];
+        let moveString = moves[index];
+        let validMove = moveFromString(move);
+
+        if (validMove) {
+          makeMove(validMove);
+          
+          if (typeof(document) != 'undefined') {
+            let pv = ''
+            let time = 0;
+            let score = 0;
+            let depth = 0;
+            
+            if (userTime) {
+              time = Date.now() - userTime;
+            } else {
+              score = guiScore;
+              depth = guiDepth;
+              time = guiTime;
+              pv = guiPv;
+            }
+            
+            moveStack[moveStack.length - 1].score = score;
+            moveStack[moveStack.length - 1].depth = depth;
+            moveStack[moveStack.length - 1].time = time;
+            moveStack[moveStack.length - 1].pv = pv;
+          }
+        }
+      }
+      
+      searchPly = 0;
+    }
+    
     // print move
     function moveToString(move) {
       return COORDINATES[getSourceSquare(move)] +
@@ -1576,9 +1637,44 @@ var Engine = function() {
        ============================              
       \****************************/
       
+      // version
+      VERSION: VERSION,
+      
+      // initial position
+      START_FEN: START_FEN,
+      
+      // perft
+      perft: function(depth) { perftTest(depth); },
+
+      // board methods
+      squareToString: function(square) { return COORDINATES[square]; },
+      printBoard: function() { printBoard(); },
+      setBoard: function(fen) { setBoard(fen); },
+      getPiece: function(square) { return board[square]; },
+      getSide: function() { return side; },
+      getSixty: function() { return sixty; },
+      
+      // move manipulation
+      moveFromString: function(moveString) { return moveFromString(moveString); },
+      moveToString: function(move) { return moveToString(move); },
+      moveStack: function() { return moveStack; },
+      loadMoves: function(moves) { loadMoves(moves); },
+      printMoveList: function(moveList) { printMoveList(moveList); },
+      
+      // timing
+      resetTimeControl: function() { resetTimeControl(); },
+      setTimeControl: function(timeControl) { setTimeControl(timeControl); },
+      getTimeControl: function() { return JSON.parse(JSON.stringify(timing))},
+      search: function(depth) { return searchPosition(depth) },
+      
+      // uci
+      setHashSize: function(Mb) { setHashSize(Mb); },
+      
       // debug engine
       debug: function() { debug(); }
       
     }
 }
 
+// export as nodejs module
+if (typeof(exports) != 'undefined') exports.Engine = Engine;
