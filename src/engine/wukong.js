@@ -788,7 +788,154 @@ var Engine = function() {
 
      ============================              
     \****************************/
+    
+    /*
+        I took evaluation parameters from Mark Dirish's
+        javascript xiangqi engine: https://github.com/markdirish/xiangqi
+        
+        Credits to initial sources (from Mark's sources):
+        
+        material weights: by Yen et al. 2004, "Computer Chinese Chess" ICGA Journal
+             PST weights: by Li, Cuanqi 2008, "Using AdaBoost to Implement Chinese
+                                               Chess Evaluation Functions", UCLA thesis
+    */
+    
+    // evaluate types       P  A  B  N  C  R  K 
+    const EVALUATE_TYPES = [1, 0, 0, 1, 1, 1, 0];
 
+    // material weights
+    const MATERIAL_WEIGHTS = [
+      //  P     A     B     N     C     R      K   
+      0, 30,  120,  120,  270,  285,  600,  6000,
+      
+      //  p     a     b     n     c     r      k
+        -30, -120, -120, -270, -285, -600, -6000
+    ];
+
+    // piece square tables
+    const PST = [
+      // pawns
+      [
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   3,   6,   9,  12,   9,   6,   3,   0,   0,
+        0,  18,  36,  56,  80, 120,  80,  56,  36,  18,   0,
+        0,  14,  26,  42,  60,  80,  60,  42,  26,  14,   0, 
+        0,  10,  20,  30,  34,  40,  34,  30,  20,  10,   0, 
+        0,   6,  12,  18,  18,  20,  18,  18,  12,   6,   0, 
+        0,   2,   0,   8,   0,   8,   0,   8,   0,   2,   0, 
+        0,   0,   0,  -2,   0,   4,   0,  -2,   0,   0,   0, 
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+      ],
+      
+      
+      [],  // skip advisors
+      [],  // skip bishops
+      
+      // knights
+      [
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   4,   8,  16,  12,   4,  12,  16,   8,   4,   0,
+        0,   4,  10,  28,  16,   8,  16,  28,  10,   4,   0, 
+        0,  12,  14,  16,  20,  18,  20,  16,  14,  12,   0, 
+        0,   8,  24,  18,  24,  20,  24,  18,  24,   8,   0, 
+        0,   6,  16,  14,  18,  16,  18,  14,  16,   6,   0, 
+        0,   4,  12,  16,  14,  12,  14,  16,  12,   4,   0, 
+        0,   2,   6,   8,   6,  10,   6,   8,   6,   2,   0, 
+        0,   4,   2,   8,   8,   4,   8,   8,   2,   4,   0, 
+        0,   0,   2,   4,   4,  -2,   4,   4,   2,   0,   0, 
+        0,   0,  -4,   0,   0,   0,   0,   0,  -4,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+      ],
+      
+      // cannon
+      [
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   6,   4,   0, -10, -12, -10,   0,   4,   6,   0,
+        0,   2,   2,   0,  -4, -14,  -4,   0,   2,   2,   0, 
+        0,   2,   2,   0, -10,  -8, -10,   0,   2,   2,   0, 
+        0,   0,   0,  -2,   4,  10,   4,  -2,   0,   0,   0, 
+        0,   0,   0,   0,   2,   8,   2,   0,   0,   0,   0, 
+        0,  -2,   0,   4,   2,   6,   2,   4,   0,  -2,   0, 
+        0,   0,   0,   0,   2,   4,   2,   0,   0,   0,   0, 
+        0,   4,   0,   8,   6,  10,   6,   8,   0,   4,   0, 
+        0,   0,   2,   4,   6,   6,   6,   4,   2,   0,   0, 
+        0,   0,   0,   2,   6,   6,   6,   2,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+      ],
+      
+      // rooks
+      [
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,  14,  14,  12,  18,  16,  18,  12,  14,  14,   0,
+        0,  16,  20,  18,  24,  26,  24,  18,  20,  16,   0, 
+        0,  12,  12,  12,  18,  18,  18,  12,  12,  12,   0, 
+        0,  12,  18,  16,  22,  22,  22,  16,  18,  12,   0, 
+        0,  12,  14,  12,  18,  18,  18,  12,  14,  12,   0, 
+        0,  12,  16,  14,  20,  20,  20,  14,  16,  12,   0, 
+        0,   6,  10,   8,  14,  14,  14,   8,  10,   6,   0, 
+        0,   4,   8,   6,  14,  12,  14,   6,   8,   4,   0, 
+        0,   8,   4,   8,  16,   8,  16,   8,   4,   8,   0, 
+        0,  -2,  10,   6,  14,  12,  14,   6,  10,  -2,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+      ],
+      
+      []  // skip kings
+    ];
+    
+    // mirror square for black
+    const MIRROR_SQUARE = [
+      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+      0,  A0,  B0,  C0,  D0,  E0,  F0,  G0,  H0,  I0,   0,
+      0,  A1,  B1,  C1,  D1,  E1,  F1,  G1,  H1,  I1,   0,
+      0,  A2,  B2,  C2,  D2,  E2,  F2,  G2,  H2,  I2,   0,
+      0,  A3,  B3,  C3,  D3,  E3,  F3,  G3,  H3,  I3,   0,
+      0,  A4,  B4,  C4,  D4,  E4,  F4,  G4,  H4,  I4,   0,
+      0,  A5,  B5,  C5,  D5,  E5,  F5,  G5,  H5,  I5,   0,
+      0,  A6,  B6,  C6,  D6,  E6,  F6,  G6,  H6,  I6,   0,
+      0,  A7,  B7,  C7,  D7,  E7,  F7,  G7,  H7,  I7,   0,
+      0,  A8,  B8,  C8,  D8,  E8,  F8,  G8,  H8,  I8,   0,
+      0,  A9,  B9,  C9,  D9,  E9,  F9,  G9,  H9,  I9,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+    ];
+    
+    // static evaluation
+    function evaluate() {
+      let score = 0;
+      
+      for (let square = 0; square < board.length; square++) {
+        if (board[square] != OFFBOARD) {
+          if (board[square]) {
+            let piece = board[square];
+            let pstIndex = PIECE_TYPE[piece] - 16;
+            let pieceColor = PIECE_COLOR[piece];
+            
+            // material score
+            score += MATERIAL_WEIGHTS[piece];
+            
+            // positional score
+            if (EVALUATE_TYPES[pstIndex]) {
+              if (pieceColor == RED) score += PST[pstIndex][square]
+              else score -= PST[pstIndex][MIRROR_SQUARE[square]];
+            }
+          }
+        }
+      }
+      
+      return (side == RED) ? score : -score;
+    }
 
     /****************************\
      ============================
@@ -827,9 +974,10 @@ var Engine = function() {
     // debug engine
     function debug() {
       //setBoard(START_FEN);
-      setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
+      //setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
+      setBoard('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1CC51/9/RNBAKABNR w - - 0 1');
       printBoard();
-      perftTest(3);
+      console.log(evaluate());
     }
     
     return {
@@ -847,21 +995,4 @@ var Engine = function() {
       
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
