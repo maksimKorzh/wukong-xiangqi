@@ -135,6 +135,9 @@ var Engine = function() {
     // 60 moves draw rule counter
     var sixty = 0;
     
+    // almost unnique position identifier
+    hashKey = 0;
+    
     // squares occupied by kings
     var kingSquare = [0, 0];
     
@@ -164,10 +167,72 @@ var Engine = function() {
       // reset game state variables
       side = RED;
       sixty = 0;
+      hashKey = 0;
       kingSquare = [0, 0];
       moveStack = [];
     }
     
+    /****************************\
+     ============================
+   
+      RANDOM NUMBER GENERATOR
+   
+     ============================              
+    \****************************/
+      
+    // fixed random seed
+    var randomState = 1804289383;
+
+    // generate 32-bit pseudo legal numbers
+    function random() {
+      var number = randomState;
+      
+      // 32-bit XOR shift
+      number ^= number << 13;
+      number ^= number >> 17;
+      number ^= number << 5;
+      randomState = number;
+
+      return number;
+    }
+
+    
+    /****************************\
+     ============================
+     
+             ZOBRIST KEYS
+
+     ============================              
+    \****************************/ 
+   
+    // random keys
+    var pieceKeys = new Array(15 * 154);
+    var sideKey;
+    
+    // init random hash keys
+    function initRandomKeys() {
+      for (var index = 0; index < pieceKeys.length; index++) pieceKeys[index] = random();
+      sideKey = random();
+    }
+    
+    // generate hash key
+    function generateHashKey() {
+      var finalKey = 0;
+      
+      // hash board position
+      for (var square = 0; square < board.length; square++) {
+        if (COORDINATES[square] != 'xx') {
+          let piece = board[square];
+          if (piece != EMPTY) finalKey ^= pieceKeys[(piece * board.length) + square];
+        }
+      }
+      
+      // hash board state variables
+      if (side == RED) finalKey ^= sideKey;
+      
+      return finalKey;
+    }
+
     
     /****************************\
      ============================
@@ -236,6 +301,9 @@ var Engine = function() {
       // parse side to move
       index++;
       side = (fen[index] == 'b') ? BLACK : RED;
+      
+      // generate hash key
+      hashKey = generateHashKey();
     }
     
     // print board to console
@@ -259,6 +327,7 @@ var Engine = function() {
       
       boardString += '   a b c d e f g h i\n\n'
       boardString += '   side:           ' + ((side == RED) ? 'r' : 'b') + '\n';
+      boardString += '   hash key:      ' + hashKey + '\n';
       boardString += '   king squares:  [' + COORDINATES[kingSquare[RED]] + ', ' +
                                              COORDINATES[kingSquare[BLACK]] + ']\n'
       console.log(boardString);
@@ -572,7 +641,7 @@ var Engine = function() {
       // moveStack board state variables
       moveStack.push({
         move: move,
-        side: side,
+        //side: side,
         sixty: sixty
       });
     
@@ -626,7 +695,9 @@ var Engine = function() {
       if (board[sourceSquare] == RED_KING || board[sourceSquare] == BLACK_KING)
         kingSquare[side ^ 1] = sourceSquare;
 
-      side = moveStack[moveIndex].side;      
+      // switch side to move
+      side ^= 1;
+           
       sixty = moveStack[moveIndex].sixty;
       moveStack.pop();
     }
@@ -731,7 +802,7 @@ var Engine = function() {
     
     // init engine
     (function initAll() {
-      
+      initRandomKeys();
     }());
     
     
@@ -745,11 +816,10 @@ var Engine = function() {
     
     // debug engine
     function debug() {
-      //setBoard(START_FEN);
-      setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
+      setBoard(START_FEN);
+      //setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
       printBoard();
       perftTest(4);
-
     }
     
     return {
