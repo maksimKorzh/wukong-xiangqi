@@ -1,0 +1,3 @@
+XieXie engine + GUI (Windows, runs under Wine on Linux): http://xiexiemaster.com/home.php
+Xiangqi for players in English: http://www.xqinenglish.com/index.php/en/
+

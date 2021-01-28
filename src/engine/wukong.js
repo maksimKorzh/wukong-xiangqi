@@ -144,6 +144,10 @@ var Engine = function() {
     // move stack
     var moveStack = [];
     
+    // plies
+    var searchPly = 0;
+    var gamePly = 0;
+    
     
     /****************************\
      ============================
@@ -170,6 +174,13 @@ var Engine = function() {
       hashKey = 0;
       kingSquare = [0, 0];
       moveStack = [];
+      
+      // reset plies
+      searchPly = 0;
+      gamePly = 0;
+      
+      // reset repetition table
+      for (let index in repetitionTable) repetitionTable[index] = 0;
     }
     
     /****************************\
@@ -331,6 +342,12 @@ var Engine = function() {
       boardString += '   king squares:  [' + COORDINATES[kingSquare[RED]] + ', ' +
                                              COORDINATES[kingSquare[BLACK]] + ']\n'
       console.log(boardString);
+    }
+    
+    // print move
+    function moveToString(move) {
+      return COORDINATES[getSourceSquare(move)] +
+             COORDINATES[getTargetSquare(move)]
     }
     
     // print pseudo legal move list
@@ -514,24 +531,38 @@ var Engine = function() {
     function getCaptureFlag(move) { return (move >> 24) & 0x1 }
     
     // push move into move list
-    function pushMove(moveList, sourceSquare, targetSquare, sourcePiece, targetPiece) {
+    function pushMove(moveList, sourceSquare, targetSquare, sourcePiece, targetPiece, onlyCaptures) {
       if (targetPiece == EMPTY || PIECE_COLOR[targetPiece] == side ^ 1) {
         let move = 0;
         
         if (targetPiece) move = encodeMove(sourceSquare, targetSquare, sourcePiece, targetPiece, 1);
-        else move = encodeMove(sourceSquare, targetSquare, sourcePiece, targetPiece, 0);
-        
+        else {
+          if (onlyCaptures == 0)  
+            move = encodeMove(sourceSquare, targetSquare, sourcePiece, targetPiece, 0);
+        }
+
         let moveScore = 0;
         
-        moveList.push({
-          move: move,
-          score: moveScore
-        });
+        if (getCaptureFlag(move)) {
+          moveScore = MVV_LVA[board[getSourceSquare(move)] * 15 + board[getTargetSquare(move)]];
+          moveScore += 10000;
+        } else {
+          if (killerMoves[searchPly] == move) moveScore = 9000;
+          else if (killerMoves[MAX_PLY + searchPly] == move) moveScore = 8000;
+          else moveScore = historyMoves[board[getSourceSquare(move)] * 154 + getTargetSquare(move)];
+        }
+
+        if (move) {
+          moveList.push({
+            move: move,
+            score: moveScore
+          });
+        }
       }
     }
     
     // generate pseudo legal moves
-    function generateMoves() {
+    function generateMoves(onlyCaptures) {
       let moveList = [];
       
       for (let sourceSquare = 0; sourceSquare < board.length; sourceSquare++) {
@@ -547,7 +578,7 @@ var Engine = function() {
                 let targetSquare = sourceSquare + PAWN_MOVE_OFFSETS[side][direction];
                 let targetPiece = board[targetSquare];
                 
-                if (targetPiece != OFFBOARD) pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                if (targetPiece != OFFBOARD) pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece, onlyCaptures);
                 if (BOARD_ZONES[side][sourceSquare]) break; 
               }
             }
@@ -559,7 +590,7 @@ var Engine = function() {
                 let targetSquare = sourceSquare + offsets[direction];
                 let targetPiece = board[targetSquare];
                 
-                if (BOARD_ZONES[side][targetSquare] == 2) pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                if (BOARD_ZONES[side][targetSquare] == 2) pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece, onlyCaptures);
               }
             }
             
@@ -570,7 +601,7 @@ var Engine = function() {
                 let jumpOver = sourceSquare + DIAGONALS[direction];
                 let targetPiece = board[targetSquare];
                 
-                if (BOARD_ZONES[side][targetSquare] && board[jumpOver] == EMPTY) pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                if (BOARD_ZONES[side][targetSquare] && board[jumpOver] == EMPTY) pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece, onlyCaptures);
               }
             }
             
@@ -584,7 +615,7 @@ var Engine = function() {
                     let targetSquare = sourceSquare + KNIGHT_MOVE_OFFSETS[direction][offset];
                     let targetPiece = board[targetSquare];
                     
-                    if (targetPiece != OFFBOARD) pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                    if (targetPiece != OFFBOARD) pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece, onlyCaptures);
                   }
                 }
               }
@@ -602,17 +633,17 @@ var Engine = function() {
                   if (jumpOver == 0) {
                     // all rook moves
                     if (pieceType == ROOK && PIECE_COLOR[targetPiece] == side ^ 1)
-                      pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                      pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece, onlyCaptures);
                     
                     // quiet cannon moves
                     else if (pieceType == CANNON && targetPiece == EMPTY)
-                      pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                      pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece, onlyCaptures);
                   }
 
                   if (targetPiece) jumpOver++;
                   if (targetPiece && pieceType == CANNON && PIECE_COLOR[targetPiece] == side ^ 1 && jumpOver == 2) {
                     // capture cannon moves
-                    pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece);
+                    pushMove(moveList, sourceSquare, targetSquare, board[sourceSquare], targetPiece, onlyCaptures);
                     break;
                   }
 
@@ -638,6 +669,10 @@ var Engine = function() {
     
     // make move
     function makeMove(move) {
+      // update plies
+      searchPly++;
+      gamePly++;
+    
       // moveStack board state variables
       moveStack.push({
         move: move,
@@ -683,6 +718,10 @@ var Engine = function() {
     
     // take back
     function takeBack() {
+      // update plies
+      searchPly--;
+      gamePly--;
+    
       // parse move
       let moveIndex = moveStack.length - 1;
       let move = moveStack[moveIndex].move;    
@@ -709,6 +748,30 @@ var Engine = function() {
            
       sixty = moveStack[moveIndex].sixty;
       hashKey = moveStack[moveIndex].hashKey;
+      moveStack.pop();
+    }
+    
+    // make null move
+    function makeNullMove() {
+      // backup current board state
+      moveStack.push({
+        move: 0,
+        side: side,
+        sixty: sixty,
+        hashKey: hashKey
+      });
+      
+      sixty = 0;
+      side ^= 1;
+      hashKey ^= sideKey;
+    }
+    
+    // take null move
+    function takeNullMove() {
+      // restore board state
+      side = moveStack[moveStack.length - 1].side;
+      sixty = moveStack[moveStack.length - 1].sixty;
+      hashKey = moveStack[moveStack.length - 1].hashKey;
       moveStack.pop();
     }
     
@@ -744,7 +807,7 @@ var Engine = function() {
     function perftDriver(depth) {
       if  (depth == 0) { nodes++; return; }
       
-      let moveList = generateMoves();
+      let moveList = generateMoves(ALL_MOVES);
       
       for (var count = 0; count < moveList.length; count++) {      
         if (!makeMove(moveList[count].move)) continue;
@@ -760,7 +823,7 @@ var Engine = function() {
       resultString = '';
       let startTime = Date.now();
       
-      let moveList = generateMoves();
+      let moveList = generateMoves(ALL_MOVES);
       
       for (var count = 0; count < moveList.length; count++) {
         if (makeMove(moveList[count].move) == 0) continue;
@@ -780,6 +843,7 @@ var Engine = function() {
       resultString += '\n    Time: ' + (Date.now() - startTime) + ' ms\n';
       console.log(resultString);
     }
+
 
     /****************************\
      ============================
@@ -937,6 +1001,106 @@ var Engine = function() {
       return (side == RED) ? score : -score;
     }
 
+
+    /****************************\
+     ============================
+   
+         TRANSPOSITION TABLE
+
+     ============================              
+    \****************************/
+    
+    // 16Mb default hash table size
+    var hashEntries = 838860;    
+
+    // no hash entry found constant
+    const NO_HASH = 100000;
+
+    // transposition table hash flags
+    const HASH_EXACT = 0;
+    const HASH_ALPHA = 1;
+    const HASH_BETA = 2;
+
+    // define TT instance
+    var hashTable = [];
+    
+    // set hash size
+    function setHashSize(Mb) {
+      hashTable = [];
+      
+      // adjust MB if going beyond the aloowed bounds
+      if(Mb < 4) Mb = 4;
+      if(Mb > 128) Mb = 128;
+      
+      hashEntries = parseInt(Mb * 0x100000 / 20);
+      initHashTable();
+      
+      console.log('Set hash table size to', Mb, 'Mb');
+      console.log('Hash table initialized with', hashEntries, 'entries');
+    }
+    
+    // clear TT (hash table)
+    function initHashTable() {
+      // loop over TT elements
+      for (var index = 0; index < hashEntries; index++) {
+        // reset TT inner fields
+        hashTable[index] = {
+          hashKey: 0,
+          depth: 0,
+          flag: 0,
+          score: 0,
+          bestMove: 0
+        }
+      }
+    }
+    
+    // read hash entry data
+    function readHashEntry(alpha, beta, bestMove, depth) {
+      // init hash entry
+      var hashEntry = hashTable[(hashKey & 0x7fffffff) % hashEntries];
+
+      // match hash key
+      if (hashEntry.hashKey == hashKey) {
+        if (hashEntry.depth >= depth) {
+          // init score
+          var score = hashEntry.score;
+          
+          // adjust mating scores
+          if (score < -MATE_SCORE) score += searchPly;
+          if (score > MATE_SCORE) score -= searchPly;
+          
+          // match hash flag
+          if (hashEntry.flag == HASH_EXACT) return score;
+          if ((hashEntry.flag == HASH_ALPHA) && (score <= alpha)) return alpha;
+          if ((hashEntry.flag == HASH_BETA) && (score >= beta)) return beta;
+        }
+
+        // store best move
+        bestMove.value = hashEntry.bestMove;
+      }
+      
+      // if hash entry doesn't exist
+      return NO_HASH;
+    }
+
+    // write hash entry data
+    function writeHashEntry(score, bestMove, depth, hashFlag) {
+      // init hash entry
+      var hashEntry = hashTable[(hashKey & 0x7fffffff) % hashEntries];
+
+      // adjust mating scores
+      if (score < -MATE_SCORE) score -= searchPly;
+      if (score > MATE_SCORE) score += searchPly;
+
+      // write hash entry data 
+      hashEntry.hashKey = hashKey;
+      hashEntry.score = score;
+      hashEntry.flag = hashFlag;
+      hashEntry.depth = depth;
+      hashEntry.bestMove = bestMove;
+    }
+
+
     /****************************\
      ============================
    
@@ -948,7 +1112,427 @@ var Engine = function() {
     // visited nodes count
     var nodes = 0;
     
+    // most valuable victim least valuable attacker, e.g. Pxr == 606, Rxp = 
+    const MVV_LVA = [
+	    0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,   0,   0,   0,
+	    0,   0,   0,   0,   0,   0,   0,   0,  106, 206, 306, 406, 506, 606, 706,
+	    0,   0,   0,   0,   0,   0,   0,   0,  105, 205, 305, 405, 505, 605, 705,
+	    0,   0,   0,   0,   0,   0,   0,   0,  104, 204, 304, 404, 504, 604, 704,
+	    0,   0,   0,   0,   0,   0,   0,   0,  103, 203, 303, 403, 503, 603, 703,
+	    0,   0,   0,   0,   0,   0,   0,   0,  102, 202, 302, 402, 502, 602, 702,
+	    0,   0,   0,   0,   0,   0,   0,   0,  101, 201, 301, 401, 501, 601, 701,
+	    0,   0,   0,   0,   0,   0,   0,   0,  100, 200, 300, 400, 500, 600, 700,
+       
+      0, 106, 206, 306, 406, 506, 606, 706,    0,   0,   0,   0,   0,   0,   0,
+	    0, 105, 205, 305, 405, 505, 605, 705,    0,   0,   0,   0,   0,   0,   0,
+	    0, 104, 204, 304, 404, 504, 604, 704,    0,   0,   0,   0,   0,   0,   0,
+	    0, 103, 203, 303, 403, 503, 603, 705,    0,   0,   0,   0,   0,   0,   0,
+	    0, 102, 202, 302, 402, 502, 602, 704,    0,   0,   0,   0,   0,   0,   0,
+	    0, 101, 201, 301, 401, 501, 601, 703,    0,   0,   0,   0,   0,   0,   0,
+	    0, 100, 200, 300, 400, 500, 600, 700,    0,   0,   0,   0,   0,   0,   0
+    ];
     
+    // search  constants
+    const MAX_PLY = 64;
+    const INFINITY = 50000;
+    const MATE_VALUE = 49000;
+    const MATE_SCORE = 48000;
+    const DO_NULL = 1;
+    const NO_NULL = 0;
+    const ALL_MOVES = 0;
+    const ONLY_CAPTURES = 1;
+    
+    // search variables
+    var followPv;
+    
+    // PV table
+    var pvTable = new Array(MAX_PLY * MAX_PLY);
+    var pvLength = new Array(MAX_PLY);
+    
+    // killer moves
+    var killerMoves = new Array(2 * MAX_PLY);
+
+    // history moves
+    var historyMoves = new Array(15 * 154);
+    
+    // repetition table
+    var repetitionTable = new Array(1000);
+
+    // time control handling  
+    var timing = {
+      timeSet: 0,
+      stopTime: 0,
+      stopped: 0,
+      time: -1
+    }
+    
+    // set time control
+    function setTimeControl(timeControl) { timing = timeControl; }
+    
+    // reset time control
+    function resetTimeControl() {
+      timing = {
+        timeSet: 0,
+        stopTime: 0,
+        stopped: 0,
+        time: -1
+      }
+    }
+    
+    function clearSearch() {
+      // reset nodes counter
+      nodes = 0;
+      timing.stopped = 0;
+      searchPly = 0;
+      
+      for (let index = 0; index < pvTable.length; index++) pvTable[index] = 0;
+      for (let index = 0; index < pvLength.length; index++) pvLength[index] = 0;
+      for (let index = 0; index < killerMoves.length; index++) killerMoves[index] = 0;
+      for (let index = 0; index < historyMoves.length; index++) historyMoves[index] = 0;
+    }
+    
+    // handle time control
+    function checkTime() {
+      if(timing.timeSet == 1 && Date.now() > timing.stopTime) timing.stopped = 1;
+    }
+
+    // position repetition detection
+    function isRepetition() {
+      for (let index = 0; index < gamePly; index++)
+        if (repetitionTable[index] == hashKey) return 1;
+
+      return 0;
+    }
+    
+    // move ordering
+    function sortMoves(currentCount, moveList) {
+      for (let nextCount = currentCount + 1; nextCount < moveList.length; nextCount++) {
+        if (moveList[currentCount].score < moveList[nextCount].score) {
+          let tempMove = moveList[currentCount];
+
+          moveList[currentCount] = moveList[nextCount];
+          moveList[nextCount] = tempMove;
+        }
+      }
+    }
+    
+    // sort PV move
+    function sortPvMove(moveList, bestMove) {
+      // sort hash table move
+      for (let count = 0; count < moveList.length; count++) {
+        if (moveList[count].move == bestMove.value) {
+          moveList[count].score = 30000;
+          return;
+        }
+      }
+      
+      // sort PV move
+      if (searchPly && followPv) {
+        followPv = 0;
+        for (let count = 0; count < moveList.length; count++) {
+          if (moveList[count].move == pvTable[searchPly]) {
+            followPv = 1;
+            moveList[count].score = 20000;
+            break;
+          }
+        }
+      }
+    }
+    
+    // store PV move
+    function storePvMove(move) {
+      pvTable[searchPly * 64 + searchPly] = move;
+      for (var nextPly = searchPly + 1; nextPly < pvLength[searchPly + 1]; nextPly++)
+        pvTable[searchPly * 64 + nextPly] = pvTable[(searchPly + 1) * 64 + nextPly];
+      pvLength[searchPly] = pvLength[searchPly + 1]
+    }
+    
+    // quiescence search
+    function quiescence(alpha, beta) {
+      pvLength[searchPly] = searchPly;
+      nodes++;
+      
+      if((nodes & 2047 ) == 0) {
+        checkTime();
+        if (timing.stopped == 1) return 0;
+      }
+
+      if (searchPly > MAX_PLY - 1) return evaluate();
+
+      let evaluation = evaluate();
+      
+      if (evaluation >= beta) return beta;
+      if (evaluation > alpha) alpha = evaluation;
+      
+      var moveList = generateMoves(ONLY_CAPTURES);
+
+      // sort PV move
+      sortPvMove(moveList, {'value': 0});
+      
+      // loop over moves
+      for (var count = 0; count < moveList.length; count++) { 
+        sortMoves(count, moveList)
+        let move = moveList[count].move;
+        
+        if (makeMove(move) == 0) continue;
+        var score = -quiescence(-beta, -alpha);
+        takeBack();
+        
+        if (timing.stopped == 1) return 0;
+        if (score > alpha) {
+          storePvMove(move);
+          alpha = score;
+          
+          if (score >= beta) return beta;
+        }
+      }
+
+      return alpha;
+    }
+    
+    // negamax search
+    function negamax(alpha, beta, depth, nullMove) {
+      pvLength[searchPly] = searchPly;
+      
+      // best move for TT
+      var bestMove = { value: 0 };
+      var hashFlag = HASH_ALPHA;
+      let score = 0;
+      let pvNode = beta - alpha > 1;
+      let futilityPruning = 0;
+      
+      // read hash entry
+      if (searchPly && 
+         (score = readHashEntry(alpha, beta, bestMove, depth)) != NO_HASH &&
+          pvNode == 0) return score;
+
+      // check time left
+      if ((nodes & 2047) == 0) {
+        checkTime();
+        if (timing.stopped == 1) return 0;
+      }
+
+      if (sixty >= 120) return 0;
+      if ((searchPly && isRepetition())) return -MATERIAL_WEIGHTS[RED_CANNON];
+      if (depth == 0) { nodes++; return quiescence(alpha, beta); }
+      
+      // mate distance pruning
+      if (alpha < -MATE_VALUE) alpha = -MATE_VALUE;
+      if (beta > MATE_VALUE - 1) beta = MATE_VALUE - 1;
+      if (alpha >= beta) return alpha;
+      
+      let legalMoves = 0;
+      let inCheck = isSquareAttacked(kingSquare[side], side ^ 1);
+      
+      // check extension
+      if (inCheck) depth++;
+      
+      if (inCheck == 0 && pvNode == 0) {
+        // static evaluation for pruning purposes
+        let staticEval = evaluate();
+      
+        // evalution pruning
+        if (depth < 3 && Math.abs(beta - 1) > -MATE_VALUE + 100) {
+          let evalMargin = MATERIAL_WEIGHTS[RED_PAWN] * depth;
+          if (staticEval - evalMargin >= beta) return staticEval - evalMargin;
+        }
+        
+        if (nullMove) {
+          // null move pruning
+          if ( searchPly && depth > 2 && staticEval >= beta) {
+            makeNullMove();
+            score = -negamax(-beta, -beta + 1, depth - 1 - 2, NO_NULL);
+            takeNullMove();
+            
+            if (timing.stopped == 1) return 0;
+            if (score >= beta) return beta;
+          }
+          
+          // razoring
+          score = staticEval + MATERIAL_WEIGHTS[RED_PAWN];
+          let newScore;
+          
+          if (score < beta) {
+            if (depth == 1) {
+              newScore = quiescence(alpha, beta);
+              return (newScore > score) ? newScore : score;
+            }
+          }
+          
+          score += MATERIAL_WEIGHTS[RED_PAWN];
+
+          if (score < beta && depth < 4) {
+            newScore = quiescence(alpha, beta);
+            if (newScore < beta) return (newScore > score) ? newScore : score;
+          }
+        }
+        
+        // futility pruning condition
+        let futilityMargin = [
+          0, MATERIAL_WEIGHTS[RED_PAWN], MATERIAL_WEIGHTS[RED_KNIGHT], MATERIAL_WEIGHTS[RED_CANNON]
+        ];
+        
+        if (depth < 4 && Math.abs(alpha) < MATE_SCORE && staticEval + futilityMargin[depth] <= alpha)
+          futilityPruning = 1;
+      }
+
+      let movesSearched = 0;
+      let moveList = generateMoves(ALL_MOVES);
+      
+      // sort PV move
+      sortPvMove(moveList, bestMove);
+      
+      // loop over moves
+      for (let count = 0; count < moveList.length; count++) {
+        sortMoves(count, moveList);
+        let move = moveList[count].move;
+        if (makeMove(move) == 0) continue;
+        legalMoves++;
+        
+        // futility pruning
+        if (futilityPruning &&
+            movesSearched &&
+            getCaptureFlag(move) == 0 &&
+            isSquareAttacked(kingSquare[side], side ^ 1) == 0
+           ) { takeBack(); continue; }
+        
+        if (movesSearched == 0) score = -negamax(-beta, -alpha, depth - 1, DO_NULL);
+        else {
+          // LMR
+          if(
+              pvNode == 0 &&
+              movesSearched > 3 &&
+              depth > 2 &&
+              inCheck == 0 &&
+              (getSourceSquare(move) != getSourceSquare(killerMoves[searchPly]) ||
+               getTargetSquare(move) != getTargetSquare(killerMoves[searchPly])) &&
+              (getSourceSquare(move) != getSourceSquare(killerMoves[MAX_PLY + searchPly]) ||
+               getTargetSquare(move) != getTargetSquare(killerMoves[MAX_PLY + searchPly])) &&
+              getCaptureFlag(move) == 0
+            ) {
+              score = -negamax(-alpha - 1, -alpha, depth - 2, DO_NULL);
+          } else score = alpha + 1;
+            
+          // PVS
+          if(score > alpha) {
+            score = -negamax(-alpha - 1, -alpha, depth - 1, DO_NULL);
+            if((score > alpha) && (score < beta)) score = -negamax(-beta, -alpha, depth - 1, DO_NULL);
+          }
+        }
+        
+        takeBack();
+        movesSearched++;
+        
+        if (timing.stopped == 1) return 0;
+        if (score > alpha) {
+          hashFlag = HASH_EXACT;
+          bestMove.value = move;
+          alpha = score;
+          storePvMove(move);
+          
+          // store history moves
+          if (getCaptureFlag(move) == 0)
+            historyMoves[board[getSourceSquare(move)] * board.length + getTargetSquare(move)] += depth;
+          
+          if (score >= beta) {
+            // store hash entry with the score equal to beta
+            writeHashEntry(beta, bestMove.value, depth, HASH_BETA);
+
+            // store killer moves
+            if (getCaptureFlag(move) == 0) {
+              killerMoves[MAX_PLY + searchPly] = killerMoves[searchPly];
+              killerMoves[searchPly] = move;
+            }
+            
+            return beta;
+          }
+        }
+      }
+      
+      // checkmate or stalemate is a win
+      if (legalMoves == 0) { return -MATE_VALUE + searchPly; }
+      
+      // store hash entry with the score equal to alpha
+      writeHashEntry(alpha, bestMove.value, depth, hashFlag);
+
+      return alpha;
+    }
+    
+    // search position for the best move
+    function searchPosition(depth) {
+      let start = Date.now();
+      let score = 0;
+      let lastBestMove = 0;
+      
+      clearSearch();
+
+      // iterative deepening
+      for (let currentDepth = 1; currentDepth <= depth; currentDepth++) {
+        lastBestMove = pvTable[0];
+        followPv = 1;
+        score = negamax(-INFINITY, INFINITY, currentDepth, DO_NULL);
+        
+        // stop searching if time is up
+        if (timing.stopped == 1 || 
+           ((Date.now() > timing.stopTime) &&
+            timing.time != -1)) break;
+        
+        let info = '';
+        
+        if (typeof(document) != 'undefined')
+          var uciScore = 0;
+        
+        if (score >= -MATE_VALUE && score <= -MATE_SCORE) {
+          info = 'info score mate ' + (parseInt(-(score + MATE_VALUE) / 2 - 1)) + 
+                 ' depth ' + currentDepth +
+                 ' nodes ' + nodes +
+                 ' time ' + (Date.now() - start) +
+                 ' pv ';
+                 
+          if (typeof(document) != 'undefined')
+            uciScore = 'M' + Math.abs((parseInt(-(score + MATE_VALUE) / 2 - 1)));
+        } else if (score >= MATE_SCORE && score <= MATE_VALUE) {
+          info = 'info score mate ' + (parseInt((MATE_VALUE - score) / 2 + 1)) + 
+                 ' depth ' + currentDepth +
+                 ' nodes ' + nodes +
+                 ' time ' + (Date.now() - start) +
+                 ' pv ';
+               
+          if (typeof(document) != 'undefined')
+            uciScore = 'M' + Math.abs((parseInt((MATE_VALUE - score) / 2 + 1)));
+        } else {
+          info = 'info score cp ' + score + 
+                 ' depth ' + currentDepth +
+                 ' nodes ' + nodes +
+                 ' time ' + (Date.now() - start) +
+                 ' pv ';
+          
+          if (typeof(document) != 'undefined')
+            uciScore = -score;
+        }
+        
+        for (let count = 0; count < pvLength[0]; count++)
+          info += moveToString(pvTable[count]) + ' ';
+                  
+        console.log(info);
+        
+        if (typeof(document) != 'undefined') {
+          if (uciScore == 49000) uciScore = 'M1';
+          guiScore = uciScore;
+          guiDepth = info.split('depth ')[1].split(' ')[0];
+          guiPv = info.split('pv ')[1];
+          guiTime = info.split('time ')[1].split(' ')[0];
+        }
+        
+        if (info.includes('mate') || info.includes('-49000')) break;
+      }
+
+      let bestMove = (timing.stopped == 1) ? lastBestMove: pvTable[0];
+      console.log('bestmove ' + moveToString(bestMove));
+      return bestMove;
+    }
+
+
     /****************************\
      ============================
    
@@ -960,6 +1544,7 @@ var Engine = function() {
     // init engine
     (function initAll() {
       initRandomKeys();
+      initHashTable();
     }());
     
     
@@ -973,11 +1558,12 @@ var Engine = function() {
     
     // debug engine
     function debug() {
-      //setBoard(START_FEN);
+      setBoard(START_FEN);
       //setBoard('r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1');
-      setBoard('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1CC51/9/RNBAKABNR w - - 0 1');
+      //setBoard('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1CC51/9/RNBAKABNR w - - 0 1');
       printBoard();
-      console.log(evaluate());
+      //perftTest(4);
+      searchPosition(8);
     }
     
     return {

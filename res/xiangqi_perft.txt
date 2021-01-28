@@ -1,0 +1,17 @@
+rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1
+depth       nodes    checks    captures
+    1          44         0           2
+    2        1920         6          72
+    3       79666       384        3159
+    4     3290240     19380      115365
+    5   133312995    953251     4917734  
+    6  5392831844
+
+
+r1ba1a3/4kn3/2n1b4/pNp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2BAKAB2 w - - 0 1
+depth       nodes    checks    captures
+    1          38         1           1
+    2        1128        12          10
+    3       43929      1190        2105
+    4     1339047     21299       31409
+    5    53112976   1496697     3262495
