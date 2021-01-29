@@ -106,14 +106,14 @@ uci.on('line', function(command){
 
   if (command == 'ucinewgame') {
     engine.initHashTable();
-    parsePosition("startpos");
+    parsePosition('startpos');
   }
 
   if (command.includes('fen') || command.includes('startpos')) parsePosition(command);
   if (command.includes('go')) parseGo(command);
   
   // set hash size
-  if (command.includes("setoption name Hash value")) {
+  if (command.includes('setoption name Hash value')) {
     let Mb = command.split(' ')[command.split(' ').length - 1];
     engine.setHashSize(Mb);
   }
