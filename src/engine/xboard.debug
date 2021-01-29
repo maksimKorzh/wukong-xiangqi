@@ -1,0 +1,151 @@
+locale = LC_CTYPE=en_US.UTF-8;LC_NUMERIC=uk_UA.UTF-8;LC_TIME=en_US.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=uk_UA.UTF-8;LC_MESSAGES=en_US.UTF-8;LC_PAPER=uk_UA.UTF-8;LC_NAME=uk_UA.UTF-8;LC_ADDRESS=uk_UA.UTF-8;LC_TELEPHONE=uk_UA.UTF-8;LC_MEASUREMENT=uk_UA.UTF-8;LC_IDENTIFICATION=uk_UA.UTF-8
+recognized 'xiangqi' (-1) as variant xiangqi
+recognized 'xiangqi' (-1) as variant xiangqi
+recognized 'xiangqi' (-1) as variant xiangqi
+shuffleOpenings = 0
+shuffleOpenings = 0
+Version: xboard 4.9.1 + MaxQi ()
+Reset(1, 0) from gameMode 0
+recognized 'xiangqi' (-1) as variant xiangqi
+GameEnds(0, (null), 2)
+shuffleOpenings = 0
+StartChildProcess (dir=".") /home/maksim/Desktop_CMK/chess_programming/xiangqi_engines/MaxQi/MaxQi
+627 >first : xboard
+protover 2
+860 <first : tellics say     MaxQi 4.8 (F)
+860 <first : tellics say     by H.G. Muller
+860 <first : feature myname="MaxQi 4.8F"
+860 >first : accepted myname
+860 <first : feature memory=1
+860 >first : accepted memory
+860 <first : feature smp=1
+860 >first : accepted smp
+860 <first : feature setboard=0 ping=1 done=0
+860 >first : accepted setboard
+860 >first : accepted ping
+860 >first : accepted done
+860 <first : feature variants="xiangqi" done=1
+860 >first : accepted variants
+860 >first : accepted done
+862 >first : memory 68
+869 >first : cores 1
+869 >first : new
+random
+869 >first : variant xiangqi
+869 >first : level 40 5 0
+869 >first : post
+869 >first : hard
+869 >first : easy
+869 >first : ping 1
+Impossible move , type = 0
+890 <first : Error (unknown command): cores
+981 <first : pong 1
+3572 >first : force
+StartChildProcess (dir=".") /home/maksim/Desktop_CMK/chess_programming/xiangqi_engines/MaxQi/MaxQi
+3574 >second: xboard
+protover 2
+3739 <second: tellics say     MaxQi 4.8 (F)
+3748 <second: tellics say     by H.G. Muller
+3748 <second: feature myname="MaxQi 4.8F"
+3748 >second: accepted myname
+3748 <second: feature memory=1
+3748 >second: accepted memory
+3748 <second: feature smp=1
+3748 >second: accepted smp
+3748 <second: feature setboard=0 ping=1 done=0
+3748 >second: accepted setboard
+3748 >second: accepted ping
+3748 >second: accepted done
+3748 <second: feature variants="xiangqi" done=1
+3748 >second: accepted variants
+3748 >second: accepted done
+3754 >second: memory 68
+3754 >second: cores 1
+3754 >second: new
+random
+3754 >second: variant xiangqi
+3754 >second: level 40 5 0
+3754 >second: post
+3754 >second: hard
+3754 >second: easy
+3754 >second: ping 1
+Impossible move , type = 0
+3755 >second: force
+3769 <second: Error (unknown command): cores
+3850 <second: pong 1
+New game (0): MaxQi 4.8F-MaxQi 4.8F (w)
+3859 >first : computer
+3859 >second: computer
+3859 >first : black
+3859 >first : time 30000
+3859 >first : otim 30000
+3859 >first : white
+book hit = (NULL)
+3860 >first : go
+nps: w=-1, b=-1
+3872 <first : Error (unknown command): computer
+3872 <first : # root hit 0 0 0
+3872 <first : -1    440        0          1 h2h9
+3872 <first :  0      0        0         16 h2h9
+3873 <first :  1     23        0         35 h0g2
+3873 <first :  2     12        0       1152 g0e2
+3892 <first :  3     26        1       5203 h0g2
+3896 <second: Error (unknown command): computer
+3926 <first :  4     18        6      21398 b2g2
+4012 <first :  5     27       14      61626 b2g2
+5566 <first :  6     20      170     836914 c0e2
+6550 <first :  7     21      268    1338823 g0e2
+9468 <first :  8     22      559    2846417 h2c2
+9477 <first : move h2c2
+9477 >second: time 30000
+9478 >second: otim 29438
+book hit = (NULL)
+9478 >second: h2c2
+9478 >second: black
+9478 >second: go
+9641 <second: # root hit 0 0 0
+9642 <second: -1    440 134057633        256 h2h9
+9642 <second:  0      0 134057633        271 h2h9
+9642 <second: # root hit 3 6 ffffff88
+9642 <second: -1    440        0          1 b7b0
+9642 <second:  0      0        0          2 b7b0
+9642 <second:  1      6        0        101 b7g7
+9642 <second:  2     -9        0        525 b7b0
+9642 <second:  3      8        0       2452 b7b0
+9642 <second:  4    -14        4      18727 b7b0
+9642 <second:  5      8        8      37747 b7g7
+9924 <second:  6    -11       44     142790 b7b0
+10120 <second:  7      0       63     233127 b7b0
+11990 <second:  8    -17      251    1206616 b7g7
+14089 <second:  9    -10      461    2159920 b7g7
+14089 <second: move b7g7
+Interrupting first
+14089 >first : time 29438
+14089 >first : otim 29538
+book hit = (NULL)
+14089 >first : b7g7
+14241 <first : # root hit 9 -23 ffffff88
+14241 <first : -1    440     1022    2846419 b7b0
+14241 <first :  0      0     1022    2846420 b7b0
+14242 <first : # root hit 3 22 ffffff88
+14242 <first : -1     90        0          1 c2c6
+14242 <first :  0      0        0          2 c2c6
+14242 <first :  1     20        0         19 g3g4
+14242 <first :  2     14        0         75 e3e4
+14242 <first :  3     21        0        610 c3c4
+14242 <first :  4     22        0       2318 c2c6
+14242 <first :  5     83        5      12198 c2c6
+14342 <first :  6     19       25      79082 h0g2
+14832 <first :  7     27       74     276031 c2c6
+GameEnds(29, xboard exit, 2)
+GE(29, xboard exit, 2) bare king k=16 color=66
+Interrupting first
+14957 >first : result * {xboard exit}
+Interrupting second
+14957 >second: result * {xboard exit}
+14957 >first : force
+14957 >first : ping 2
+14957 >second: force
+14957 >second: ping 2
+14957 >first : quit
+14971 >second: quit

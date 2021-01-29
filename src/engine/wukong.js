@@ -1643,6 +1643,13 @@ var Engine = function() {
       // initial position
       START_FEN: START_FEN,
       
+      // side to move
+      COLOR: {
+        RED: RED,
+        BLACK: BLACK,
+        NO_COLOR: NO_COLOR
+      },
+      
       // perft
       perft: function(depth) { perftTest(depth); },
 
@@ -1653,6 +1660,7 @@ var Engine = function() {
       getPiece: function(square) { return board[square]; },
       getSide: function() { return side; },
       getSixty: function() { return sixty; },
+      resetSearchPly: function() { searchPly = 0 },
       
       // move manipulation
       moveFromString: function(moveString) { return moveFromString(moveString); },
@@ -1660,6 +1668,7 @@ var Engine = function() {
       moveStack: function() { return moveStack; },
       loadMoves: function(moves) { loadMoves(moves); },
       printMoveList: function(moveList) { printMoveList(moveList); },
+      makeMove: function(move) { makeMove(move)},
       
       // timing
       resetTimeControl: function() { resetTimeControl(); },
@@ -1669,6 +1678,7 @@ var Engine = function() {
       
       // uci
       setHashSize: function(Mb) { setHashSize(Mb); },
+      initHashTable: function() { initHashTable(); },
       
       // debug engine
       debug: function() { debug(); }

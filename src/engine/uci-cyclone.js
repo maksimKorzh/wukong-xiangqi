@@ -1,8 +1,14 @@
 /****************************\
  ============================
+
            UCI MODE
+
  ============================              
 \****************************/
+
+/*
+    
+*/
 
 // init engine
 const { Engine } = require('./wukong.js');  
@@ -24,10 +30,10 @@ function parseGo(command) {
   let movetime = -1;
   let inc = 0;
 
-  if (go[1] == 'wtime' && engine.getSide() == engine.COLOR['WHITE'] ) { timing.time = parseInt(go[2]); }
-  if (go[3] == 'btime' && engine.getSide() == engine.COLOR['BLACK'] ) { timing.time = parseInt(go[4]); }
-  if (go[5] == 'winc' && engine.getSide() == engine.COLOR['WHITE']) { inc = parseInt(go[6]); }
-  if (go[7] == 'binc' && engine.getSide() == engine.COLOR['BLACK']) { inc = parseInt(go[8]); }
+  if (go[1] == 'btime' && engine.getSide() == engine.COLOR['RED'] ) { timing.time = parseInt(go[2]); }
+  if (go[3] == 'wtime' && engine.getSide() == engine.COLOR['BLACK'] ) { timing.time = parseInt(go[4]); }
+  if (go[5] == 'binc' && engine.getSide() == engine.COLOR['RED']) { inc = parseInt(go[6]); }
+  if (go[7] == 'winc' && engine.getSide() == engine.COLOR['BLACK']) { inc = parseInt(go[8]); }
   if (go[9] == 'movestogo') { movestogo = parseInt(go[10]); }
   if (go[1] == 'movetime') { movetime = parseInt(go[2]); }
   if (go[1] == 'depth') { depth = parseInt(go[2]); }
@@ -69,10 +75,8 @@ function parseGo(command) {
 
 // parse UCI "position" command
 function parsePosition(command) {
-  let position = command.split(' ');
-  
-  if (position[1].includes('startpos')) engine.setBoard(engine.START_FEN);
-  else if (position[1] == 'fen') engine.setBoard(command.split('position fen ')[1]);
+  if (command == 'startpos') engine.setBoard(engine.START_FEN);
+  else engine.setBoard(command.split('fen ')[1]);
   
   let moves = command.split('moves ')[1];
   if (moves) { engine.loadMoves(moves); };
@@ -99,8 +103,13 @@ uci.on('line', function(command){
 
   if (command == 'isready') console.log('readyok');
   if (command == 'quit') process.exit();
-  if (command == 'ucinewgame') parsePosition("position startpos");
-  if (command.includes('position')) parsePosition(command);
+
+  if (command == 'ucinewgame') {
+    engine.initHashTable();
+    parsePosition("startpos");
+  }
+
+  if (command.includes('fen') || command.includes('startpos')) parsePosition(command);
   if (command.includes('go')) parseGo(command);
   
   // set hash size
