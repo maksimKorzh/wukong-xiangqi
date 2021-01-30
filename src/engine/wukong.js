@@ -718,6 +718,22 @@ var Engine = function() {
       
       return moveList;
     }
+    
+    // generate only legal moves
+    function generateLegalMoves() {
+      clearSearch();
+      
+      let legalMoves = [];
+      let moveList = generateMoves();
+
+      for (let count = 0; count < moveList.length; count++) {
+        if (makeMove(moveList[count].move) == 0) continue;
+        legalMoves.push(moveList[count]);
+        takeBack();
+      }
+      
+      return legalMoves;
+    }
 
 
     /****************************\
@@ -1660,15 +1676,22 @@ var Engine = function() {
       getPiece: function(square) { return board[square]; },
       getSide: function() { return side; },
       getSixty: function() { return sixty; },
-      resetSearchPly: function() { searchPly = 0 },
+      resetSearchPly: function() { searchPly = 0; },
+      generateLegalMoves: function() { return generateLegalMoves(); },
+      isRepetition: function() { return isRepetition(); },
+      inCheck: function(color) { return isSquareAttacked(kingSquare[color], color ^ 1); },
       
       // move manipulation
       moveFromString: function(moveString) { return moveFromString(moveString); },
       moveToString: function(move) { return moveToString(move); },
+      getSourceSquare: function(move) { return getSourceSquare(move); },
+      getTargetSquare: function(move) { return getTargetSquare(move); },
+      getCaptureFlag: function(move) { return getCaptureFlag(move); },
       moveStack: function() { return moveStack; },
       loadMoves: function(moves) { loadMoves(moves); },
       printMoveList: function(moveList) { printMoveList(moveList); },
       makeMove: function(move) { makeMove(move)},
+      takeBack: function() { takeBack(); },
       
       // timing
       resetTimeControl: function() { resetTimeControl(); },

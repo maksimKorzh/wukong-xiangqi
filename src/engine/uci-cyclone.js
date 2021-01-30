@@ -1,13 +1,15 @@
 /****************************\
  ============================
 
-           UCI MODE
+       UCI Cyclone MODE
 
  ============================              
 \****************************/
 
 /*
-    
+    UCI Cyclone dialect. Tested with Xboard
+    using uci2wb adapter. Not an official feature,
+    so use it at your own risk.
 */
 
 // init engine
