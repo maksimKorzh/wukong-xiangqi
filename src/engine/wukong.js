@@ -313,6 +313,9 @@ var Engine = function() {
       index++;
       side = (fen[index] == 'b') ? BLACK : RED;
       
+      // parse sixty move rule
+      sixty = parseInt(fen.split(' ')[fen.split(' ').length - 2]);
+      
       // generate hash key
       hashKey = generateHashKey();
     }
@@ -338,6 +341,7 @@ var Engine = function() {
       
       boardString += '   a b c d e f g h i\n\n'
       boardString += '   side:           ' + ((side == RED) ? 'r' : 'b') + '\n';
+      boardString += '   sixty:          ' + sixty + '\n';
       boardString += '   hash key:      ' + hashKey + '\n';
       boardString += '   king squares:  [' + COORDINATES[kingSquare[RED]] + ', ' +
                                              COORDINATES[kingSquare[BLACK]] + ']\n'
@@ -749,6 +753,9 @@ var Engine = function() {
       // update plies
       searchPly++;
       gamePly++;
+      
+      // update repetition table
+      repetitionTable[gamePly] = hashKey;
     
       // moveStack board state variables
       moveStack.push({
@@ -1682,6 +1689,7 @@ var Engine = function() {
       inCheck: function(color) { return isSquareAttacked(kingSquare[color], color ^ 1); },
       
       // move manipulation
+      moveStack: function () { return moveStack; },
       moveFromString: function(moveString) { return moveFromString(moveString); },
       moveToString: function(move) { return moveToString(move); },
       getSourceSquare: function(move) { return getSourceSquare(move); },

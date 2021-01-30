@@ -140,12 +140,11 @@ var repetitions = 0;
 
 // set board theme
 function setBoardTheme(theme) {
-  console.log('here')
   document.getElementById('xiangqiboard').style.backgroundImage = 'url(' + theme + ')';
 }
 
 // set piece theme
-function setPieceTheme(theme) {console.log('here')
+function setPieceTheme(theme) {
   pieceFolder = theme;
   drawBoard();
 }
@@ -173,7 +172,7 @@ function dropPiece(event, square) {
     userTime = Date.now() - userTime;
     document.getElementById(square).style.backgroundColor = SELECT_COLOR;
     playSound(valid);
-    //updatePgn();
+    updatePgn();
   }
   
   event.preventDefault();
@@ -203,29 +202,11 @@ function tapPiece(square) {
     if (engine.getPiece(square) && valid) {
       document.getElementById(square).style.backgroundColor = engine.SELECT_COLOR;
       playSound(valid);
-      //updatePgn();
+      updatePgn();
     }
 
     if (valid) setTimeout(function() { think(); }, 1);
   }
-}
-
-// validate move
-function validateMove(userSource, userTarget) {
-  let moveString = engine.squareToString(userSource) + 
-                   engine.squareToString(userTarget);
-
-  let move = engine.moveFromString(moveString);
-  return move;
-}
-
-// move piece in GUI
-function movePiece(userSource, userTarget) {
-  let moveString = engine.squareToString(userSource) +
-                   engine.squareToString(userTarget);
-
-  engine.loadMoves(moveString);
-  drawBoard();
 }
 
 // engine move
@@ -261,51 +242,56 @@ function think() {
   let sourceSquare = engine.getSourceSquare(bestMove);
   let targetSquare = engine.getTargetSquare(bestMove);
 
-  console.log('before result:', gameResult);
-
-  /*if (engine.isRepetition()) repetitions++;
+  if (engine.isRepetition()) repetitions++;
   if (repetitions == 3) {
-    gameResult = '1/2-1/2 Draw by 3 fold repetition';
-    console.log('3 fold');
-    //updatePgn();
+    gameResult = '3 fold repetition ' + (engine.getSide() ? 'black' : 'red') + ' lost';
+    updatePgn();
     return;
   } else if (engine.getSixty() >= 120) {
     gameResult = '1/2-1/2 Draw by 60 rule move';
-    console.log('60 rule');
-    //updatePgn();
+    updatePgn();
     return;
-  } else if (engine.isMaterialDraw()) {
+  }/* else if (engine.isMaterialDraw()) {
     gameResult = '1/2-1/2 Draw by insufficient material';
     updatePgn();
     return;
-  } else if (engine.generateLegalMoves().length == 0 && engine.inCheck()) {
+  }*//* else if (engine.generateLegalMoves().length == 0 && engine.inCheck()) {
     gameResult = engine.getSide() == 0 ? '0-1 Mate' : '1-0 Mate';
     //updatePgn();
-    console.log('mate');
+
     return;
   } else if (guiScore == 'M1') {
     gameResult = engine.getSide() == 0 ? '1-0 Mate' : '0-1 Mate';
   } else if (engine.generateLegalMoves().length == 0 && engine.inCheck() == 0) {
     gameResult = 'Stalemate';
-    console.log('stalemate');
+
     //updatePgn();
     return;
   }*/
-  console.log('game result:', gameResult);
-  setTimeout(function() {
+
+  //setTimeout(function() {
     movePiece(sourceSquare, targetSquare);
     drawBoard();
  
     if (engine.getPiece(targetSquare)) {
-      document.getElementById(targetSquare).style.backgroundColor = SELECT_COLOR;             
+      //document.getElementById(targetSquare).style.backgroundColor = SELECT_COLOR;             
       playSound(bestMove);
-      //updatePgn();
+      updatePgn();
       userTime = Date.now();
     }
   
-  }, 0);
+  //}, 0);
   
   // delayMove + (guiTime < 100 && delayMove == 0) ? 1000 : ((guiDepth == 0) ? 500 : 100)
+}
+
+// move piece in GUI
+function movePiece(userSource, userTarget) {
+  let moveString = engine.squareToString(userSource) +
+                   engine.squareToString(userTarget);
+
+  engine.loadMoves(moveString);
+  drawBoard();
 }
 
 // take move back
@@ -313,6 +299,96 @@ function undo() {
   gameResult = '*';
   engine.takeBack();
   drawBoard();
+}
+
+// validate move
+function validateMove(userSource, userTarget) {
+  let moveString = engine.squareToString(userSource) + 
+                   engine.squareToString(userTarget);
+
+  let move = engine.moveFromString(moveString);
+  return move;
+}
+
+
+/****************************\
+ ============================
+
+             PGN
+
+ ============================              
+\****************************/
+
+// get pgn
+function getGamePgn() {
+  let moveStack = engine.moveStack();
+  let pgn = '';
+
+  for (let index = 0; index < moveStack.length; index++) {
+    let move = moveStack[index].move;
+    let moveScore = moveStack[index].score;
+    let moveDepth = moveStack[index].depth;
+    let moveTime = moveStack[index].time;
+    let movePv = moveStack[index].pv;
+    let moveString = engine.moveToString(move);
+    let moveNumber = ((index % 2) ? '': ((index / 2 + 1) + '. '));
+    let displayScore = (((moveScore / 100) == 0) ? '-0.00' : (moveScore / 100)) + '/' + moveDepth + ' ';
+    let stats = (movePv ? '(' + movePv.trim() + ')' + ' ': '') + 
+                (moveDepth ? ((moveScore > 0) ? ('+' + displayScore) : displayScore): '') +
+                Math.round(moveTime / 1000);
+    
+    let nextMove = moveNumber + moveString + (moveTime ? ' {' + stats + '}' : '');
+    
+    pgn += nextMove + ' ';
+    userTime = 0;      
+  }
+
+  return pgn;
+}
+
+// update PGN
+function updatePgn() {
+  let pgn = getGamePgn();
+  let gameMoves = document.getElementById('pgn');
+  
+  gameMoves.value = pgn;
+  
+  if (gameResult == '1-0 Mate' || gameResult == '0-1 Mate') {
+    gameMoves.value += '# ' + gameResult;
+  } else if (gameResult != '*') {
+    gameMoves.value += ' ' + gameResult;
+  }
+  
+  gameMoves.scrollTop = gameMoves.scrollHeight;
+}
+
+// download PGN
+function downloadPgn() {
+  let userName = prompt('Enter your name:', 'Player');
+  let userColor = (guiSide == 0) ? 'White' : 'Black';
+  
+  if (userColor != 'White' && userColor != 'Black') {
+    alert('Wrong color, please try again');
+    return;
+  }
+
+  let header = '';
+  if (guiFen) header += '[FEN "' + guiFen + '"]\n';
+  header += '[Event "Friendly chess game"]\n';
+  header += '[Site "https://maksimkorzh.github.io/wukongJS/wukong.html"]\n';
+  header += '[Date "' + new Date() + '"]\n';
+  header += '[White "' + ((userColor == 'White') ? userName : botName) + '"]\n';
+  header += '[Black "' + ((userColor == 'Black') ? userName : botName) + '"]\n';
+  header += '[Result "' + gameResult + '"]\n\n';
+
+  let downloadLink = document.createElement('a');
+  downloadLink.id = 'download';
+  downloadLink.download = ((userColor == 'White') ? (userName + '_vs_' + botName + '.pgn') : (botName + '_vs_' + userName + '.pgn'));
+  downloadLink.hidden = true;
+  downloadLink.href = window.URL.createObjectURL( new Blob([header + getGamePgn() + ((gameResult == '*') ? ' *' : '')], {type: 'text'}));
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
 }
 
 
@@ -348,6 +424,5 @@ function newGame() {
 \****************************/
 
 newGame();
-drawBoard();
 
 
