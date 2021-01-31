@@ -98,48 +98,37 @@
           </button>
           <div class="dropdown-menu dropdown-menu-right text-right" aria-labelledby="dropdownMenuButton" style="width: 202px;">
             <li class="list-group-item-action mb-1" onclick="setBoardTheme('game/images/boards/board_light.svg');">
-              <button class="btn">Light theme</button>
-              <img src="game/images/boards/board_light.svg" class="mr-2" style="width: 40px;"></img>
+              <button class="btn">Light theme
+                <img src="game/images/boards/board_light.svg" class="mr-2" style="width: 40px;"></img>
+              </button>
             </li>
             <li class="list-group-item-action mb-1" onclick="setBoardTheme('game/images/boards/board_dark.svg');">
-              <button class="btn">Dark theme</button>
+              <button class="btn">Dark theme
               <img src="game/images/boards/board_dark.svg" class="mr-2" style="width: 40px;"></img>
+              </button>
             </li>
             <li class="list-group-item-action mb-1" onclick="setPieceTheme('romanized_pieces');">
-              <button class="btn">Romanized</button>
-              <img src="game/images/romanized_pieces/14.svg" class="mr-2" style="width: 40px;"></img>
+              <button class="btn">Romanized
+                <img src="game/images/romanized_pieces/14.svg" class="mr-2" style="width: 40px;"></img>
+              </button>
             </li>
-            
             <li class="list-group-item-action mb-1" onclick="setPieceTheme('traditional_pieces');">
-              <button class="btn">Traditional</button>
-              <img src="game/images/traditional_pieces/7.svg" class="mr-2" style="width: 40px;"></img>
+              <button class="btn">Traditional
+                <img src="game/images/traditional_pieces/7.svg" class="mr-2" style="width: 40px;"></img>
+              </button>
             </li>
             
-            
-            <!--
-            <li class="list-group-item-action mb-1" onclick="setPromotion(5);">
-              <button class="btn">Queen</button>
-              <img src="Images/5.gif" class="mr-2" style="width: 40px; border: 1px solid #777;"></img>
-            </li>
-            <li class="list-group-item-action mb-1" onclick="setPromotion(4);">
-              <button class="btn">Rook</button>
-              <img src="Images/4.gif" class="mr-2" style="width: 40px; border: 1px solid #777;"></img>
-            </li>
-            <li class="list-group-item-action mb-1" onclick="setPromotion(3);">
-              <button class="btn">Bishop</button>
-              <img src="Images/3.gif" class="mr-2" style="width: 40px; border: 1px solid #777;"></img>
-            </li>
-            <li class="list-group-item-action mb-1" onclick="setPromotion(2);">
-              <button class="btn">Knight</button>
-              <img src="Images/2.gif" class="mr-2" style="width: 40px; border: 1px solid #777;"></img>
-            </li>
-            -->
+            <!-- Download PGN -->
+            <div class="dropdown-divider"></div>
+            <div class="text-center">
+              <button class="btn btn-sm btn-outline-success" onclick="downloadPgn();">Download PGN</button>
+            </div>
           </div>
         </div>
       </div>
       
       <!-- PGN -->
-      <textarea id="pgn" rows="3" name="text" class="form-control" style="width: 420px;"></textarea>
+      <textarea id="pgn" rows="3" name="text" class="form-control" style="width: 420px;" spellcheck="false"></textarea>
 
     <div>
     

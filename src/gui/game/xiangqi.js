@@ -211,8 +211,6 @@ function tapPiece(square) {
 
 // engine move
 function think() {
-  //if (engine.inCheck(guiSide)) return;
-  
   engine.resetTimeControl();
 
   let timing = engine.getTimeControl();
@@ -257,9 +255,7 @@ function think() {
     gameResult = '1/2-1/2 Draw by 60 rule move';
     updatePgn();
     return;
-  }
-  
-  // 4k4/9/9/9/9/9/9/9/9/RR3K3 w - - 0 1
+  } // TODO: material draw?
 
   setTimeout(function() {
     movePiece(sourceSquare, targetSquare);
@@ -360,6 +356,7 @@ function updatePgn() {
 // download PGN
 function downloadPgn() {
   let userName = prompt('Enter your name:', 'Player');
+  if (userName == null) return;
   let userColor = (guiSide == 0) ? 'White' : 'Black';
   
   if (userColor != 'White' && userColor != 'Black') {
