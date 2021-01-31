@@ -7,8 +7,8 @@
 <h4 align="center">by</h4>
 <h4 align="center">Code Monkey King</h4>
 <p align="center">
-  <a href="https://github.com/maksimKorzh/wukongJS/raw/main/releases">Old versions</a> |
-  <a href="https://github.com/maksimKorzh/wukongJS/raw/main/releases/Wukong_v1.0.zip">Download</a> |
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/raw/main/releases">Old versions</a> |
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/raw/main/releases/Wukong_v1.0.zip">Download</a> |
   <a class="btn btn-success" href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a>
 </p>
 <hr>
