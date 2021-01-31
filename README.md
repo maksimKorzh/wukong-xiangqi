@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo/LOGO.png">
+  <img src="src/gui/game/images/misc/logo.png">
 </p>
 
 <h1 align="center">Wukong JS</h1>
@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/maksimKorzh/wukongJS/raw/main/releases">Old versions</a> |
   <a href="https://github.com/maksimKorzh/wukongJS/raw/main/releases/Wukong_v1.0.zip">Download</a> |
-  <a class="btn btn-success" href="https://maksimkorzh.github.io/wukongJS/wukong.html">Play online</a>
+  <a class="btn btn-success" href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a>
 </p>
 <hr>
 <p align="center">
