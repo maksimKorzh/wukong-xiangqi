@@ -411,6 +411,16 @@ var Engine = function() {
       searchPly = 0;
     }
     
+    // get game moves
+    function getMoves() {
+      let moves = [];
+      
+      for (let index = 0; index < moveStack.length; index++) 
+        moves.push(moveToString(moveStack[index].move));
+      
+      return moves;
+    }
+    
     // print move
     function moveToString(move) {
       return COORDINATES[getSourceSquare(move)] +
@@ -1697,6 +1707,7 @@ var Engine = function() {
       getCaptureFlag: function(move) { return getCaptureFlag(move); },
       moveStack: function() { return moveStack; },
       loadMoves: function(moves) { loadMoves(moves); },
+      getMoves: function() { return getMoves(); },
       printMoveList: function(moveList) { printMoveList(moveList); },
       makeMove: function(move) { makeMove(move)},
       takeBack: function() { takeBack(); },

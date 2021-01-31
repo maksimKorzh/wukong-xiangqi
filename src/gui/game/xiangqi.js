@@ -155,7 +155,7 @@ function playSound(move) {
 /****************************\
  ============================
 
-          GAME PLAY
+          USER INPUT
 
  ============================              
 \****************************/
@@ -245,6 +245,48 @@ function tapPiece(square) {
   }
 }
 
+
+/****************************\
+ ============================
+
+        ENGINE MOVES
+
+ ============================              
+\****************************/
+
+// use opening book
+function getBookMove() {
+  if (allowBook == 0) return 0;
+
+  let moves = engine.getMoves();
+  let lines = [];
+  
+  if (moves.length == 0) {
+    let randomLine = book[Math.floor(Math.random() * book.length)];
+    let firstMove = randomLine.split(' ')[0];
+    return engine.moveFromString(firstMove);
+  } else if (moves.length) {
+    for (let line = 0; line < book.length; line++) {
+      let currentLine = moves.join(' ');
+
+      if (book[line].includes(currentLine) && book[line].split(currentLine)[0] == '')
+        lines.push(book[line]);
+    }
+  }
+  
+  if (lines.length) {
+    let currentLine = moves.join(' ');
+    let randomLine = lines[Math.floor(Math.random() * lines.length)];
+
+    try {
+      let bookMove = randomLine.split(currentLine)[1].split(' ')[1];
+      return engine.moveFromString(bookMove);
+    } catch(e) { return 0; }
+  }
+
+  return 0;
+}
+
 // engine move
 function think() {
   if (document.getElementById('editMode').checked == true) return;
@@ -254,29 +296,28 @@ function think() {
   let timing = engine.getTimeControl();
   let startTime = new Date().getTime();
   
-  //if (fixedTime) {
+  if (fixedTime) {
     fixedDepth = 64;
     timing.timeSet = 1;
-    timing.time = 1000;//fixedTime * 1000;
+    timing.time = fixedTime * 1000;
     timing.stopTime = startTime + timing.time
     engine.setTimeControl(timing);
-  //}
+  }
   
-  //let bookMoveFlag = 0;
+  let bookMoveFlag = 0;
   let delayMove = 0;
-  /*let bestMove = getBookMove();
-  
-  if (bestMove) {
-    bookMoveFlag = 1;
-    delayMove = 1000;
-  }*/
+  let bestMove = getBookMove();
 
-  //else if (bestMove == 0) bestMove = engine.search(fixedDepth);
-  
-  bestMove = engine.search(64);
+  if (botName == 'Baihua') {
+    let moves = engine.generateLegalMoves();
+    bestMove = moves[Math.floor(Math.random() * moves.length)].move;
+  } else {
+    if (bestMove) bookMoveFlag = 1;
+    else if (bestMove == 0) bestMove = engine.search(fixedDepth);
+  }
   
   // mating score, delay move to avoid skip playing sound
-  if (typeof(guiScore) == 'string') delayMove = 1000;
+  if (bookMoveFlag || fixedDepth || typeof(guiScore) == 'string') delayMove = 1000;
   
   let sourceSquare = engine.getSourceSquare(bestMove);
   let targetSquare = engine.getTargetSquare(bestMove);

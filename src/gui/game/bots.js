@@ -1,36 +1,31 @@
 const bots = {
   'Baihua': {
     image: 'game/images/bots/baihua.jpg',
-    description: 'Bai Hua is a little kitten helping Code Monkey King to write chess engines. Did you bring some milk for her?',
+    description: 'Little kitten, plays random moves',
     time: 0,
-    depth: 0,
+    depth: 1,
     book: [
-      '',
+      'xxxx',
     ]
   },
   
   'CMK': {
     image: 'game/images/bots/cmk.png',
-    description: 'Author of this engine:\nfreesoft.for.people@gmail.com',
+    description: 'Author of this engine, knows rules of game\nfreesoft.for.people@gmail.com',
     time: 0,
     depth: 1,
     book: [
-      'h2e2 h7e7'
+      'h2e2 h7e7 h0g2 h9g7 i0i1 i9h9'
     ]  
   },
   
   'HGM': {
     image: 'game/images/bots/hgm.jpg',
-    description: 'Physicist that works in basic research\nhttps://home.hccnet.nl/h.g.muller/chess.html',
+    description: 'Physicist that works in basic research, plays logically\nhttps://home.hccnet.nl/h.g.muller/chess.html',
     time: 0,
     depth: 2,
     book: [
-      'e2e4 c7c5 c2c3',
-      'e2e4 d7d6 d2d4 g7g6',
-      'e2e4 d7d5 e4d5',
-      'e2e4 e7e6 d2d4 d7d5',
-      'e2e4 e7e5 b1c3',
-      'e2e4 e7e5 g1f3 b8c6 f1c4 g8f6'
+      'h2h4 h7d7 h4b4 b7b2 i0i2 b2b3'
     ]
   },
   
@@ -40,17 +35,17 @@ const bots = {
     time: 0,
     depth: 4,
     book: [
-      ''
+      'h2e2 h7e7 h0g2 h9g7 i0h0 b9c7'
     ]  
   },
   
   'Wukong': {
     image: 'game/images/bots/wukong.png',
-    description: 'Song Wukong is the great sage equal to heaven, now he is also playing chess:\nhttps://github.com/maksimKorzh/wukong-xiangqi',
+    description: 'Great sage equal to heaven\nhttps://github.com/maksimKorzh/wukong-xiangqi',
     time: 1,
     depth: 0,
     book: [
-      ''
+      'h2e2 b7e7 h0g2 b9c7 i0h0 h7g7'
     ]  
   }
 }
