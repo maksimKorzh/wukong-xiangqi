@@ -9,11 +9,9 @@
  - move stack for storing board state variables
 
 # Evaluation
- - based on simplified evaluation by Tomasz Michniewski 
- - material + PST only obtained by <a href="https://github.com/maksimKorzh/wukongJS/blob/main/docs/TEXEL'S_TUNING.MD">Texel's tuning method</a>
- - tapared evaluation
- - insufficient material detection
-
+ - material weights from Yen et al. 2004, "Computer Chinese Chess" ICGA Journal
+ - PST values from Li, Cuanqi 2008, "Using AdaBoost to Implement Chinese Chess Evaluation Functions", UCLA thesis
+ 
 # Search
  - 50 move rule detection
  - 3 fold repetition detection
@@ -28,5 +26,15 @@
  - PVS (Principal variation search)
  
  # Interfaces
- - UCI protocol
+ - UCI Cyclone protocol (works with Xboard/Winboard via uci2wb adapter)
  - Web browser
+ 
+ # GUI
+ - play/edit modes
+ - difficulty levels
+ - highlight legal moves
+ -  
+ - download PGN
+ 
+ 
+ 
