@@ -1,7 +1,6 @@
 # Board representation
  - 0x88 board representation
  - 32-bit Zobrizt hashing
- - piece lists
 
 # Move generator
  - on the fly attacks
@@ -26,8 +25,8 @@
  - PVS (Principal variation search)
  
  # Interfaces
- - UCI Cyclone protocol (works with Xboard/Winboard via uci2wb adapter)
  - Web browser
+ - UCI Cyclone protocol (works with Xboard/Winboard via uci2wb adapter)
  
  # GUI
  - play/edit modes
