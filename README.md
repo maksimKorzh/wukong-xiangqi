@@ -14,10 +14,10 @@
 <hr>
 <p align="center">
   <a href="https://github.com/maksimKorzh/wukongJS">WukongJS</a> |
-  <a href="https://github.com/maksimKorzh/wukongJS/blob/main/docs/ABOUT.MD">About</a> |
-  <a href="https://github.com/maksimKorzh/wukongJS/blob/main/docs/SPECS.MD">Tech specs</a> |
-  <a href="https://github.com/maksimKorzh/wukongJS/blob/main/docs/CREDITS.MD">Credits</a> |
-  <a href="https://github.com/maksimKorzh/wukongJS/issues">Support</a>
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/ABOUT.MD">About</a> |
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/SPECS.MD">Tech specs</a> |
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/CREDITS.MD">Credits</a> |
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/issues">Support</a>
 </p>
 <hr>
 <p align="center">
