@@ -101,6 +101,17 @@ function drawBoard() {
   document.getElementById('xiangqiboard').innerHTML = chessBoard;
 }
 
+// set board theme
+function setBoardTheme(theme) {
+  document.getElementById('xiangqiboard').style.backgroundImage = 'url(' + theme + ')';
+}
+
+// set piece theme
+function setPieceTheme(theme) {
+  pieceFolder = theme;
+  drawBoard();
+}
+
 // play sound
 function playSound(move) {
   if (engine.getCaptureFlag(move)) CAPTURE_SOUND.play();
@@ -137,17 +148,6 @@ var userSource, userTarget;
 
 // 3 fold repetitions
 var repetitions = 0;
-
-// set board theme
-function setBoardTheme(theme) {
-  document.getElementById('xiangqiboard').style.backgroundImage = 'url(' + theme + ')';
-}
-
-// set piece theme
-function setPieceTheme(theme) {
-  pieceFolder = theme;
-  drawBoard();
-}
 
 // pick piece handler
 function dragPiece(event, square) {
@@ -239,6 +239,9 @@ function think() {
   
   bestMove = engine.search(64);
   
+  // mating score, delay move to avoid skip playing sound
+  if (typeof(guiScore) == 'string') delayMove = 1000;
+  
   let sourceSquare = engine.getSourceSquare(bestMove);
   let targetSquare = engine.getTargetSquare(bestMove);
 
@@ -247,42 +250,34 @@ function think() {
     gameResult = '3 fold repetition ' + (engine.getSide() ? 'black' : 'red') + ' lost';
     updatePgn();
     return;
+  } else if (engine.generateLegalMoves().length == 0) {
+    gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
+    updatePgn();
   } else if (engine.getSixty() >= 120) {
     gameResult = '1/2-1/2 Draw by 60 rule move';
     updatePgn();
     return;
-  }/* else if (engine.isMaterialDraw()) {
-    gameResult = '1/2-1/2 Draw by insufficient material';
-    updatePgn();
-    return;
-  }*//* else if (engine.generateLegalMoves().length == 0 && engine.inCheck()) {
-    gameResult = engine.getSide() == 0 ? '0-1 Mate' : '1-0 Mate';
-    //updatePgn();
+  }
+  
+  // 4k4/9/9/9/9/9/9/9/9/RR3K3 w - - 0 1
 
-    return;
-  } else if (guiScore == 'M1') {
-    gameResult = engine.getSide() == 0 ? '1-0 Mate' : '0-1 Mate';
-  } else if (engine.generateLegalMoves().length == 0 && engine.inCheck() == 0) {
-    gameResult = 'Stalemate';
-
-    //updatePgn();
-    return;
-  }*/
-
-  //setTimeout(function() {
+  setTimeout(function() {
     movePiece(sourceSquare, targetSquare);
     drawBoard();
  
     if (engine.getPiece(targetSquare)) {
-      //document.getElementById(targetSquare).style.backgroundColor = SELECT_COLOR;             
+      document.getElementById(targetSquare).style.backgroundColor = SELECT_COLOR;             
       playSound(bestMove);
       updatePgn();
       userTime = Date.now();
+      
+      if (engine.generateLegalMoves().length == 0) {
+        gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
+        updatePgn();
+      }
     }
   
-  //}, 0);
-  
-  // delayMove + (guiTime < 100 && delayMove == 0) ? 1000 : ((guiDepth == 0) ? 500 : 100)
+  }, delayMove);
 }
 
 // move piece in GUI

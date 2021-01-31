@@ -382,26 +382,28 @@ var Engine = function() {
 
         if (validMove) {
           makeMove(validMove);
-          
+
           if (typeof(document) != 'undefined') {
-            let pv = ''
-            let time = 0;
-            let score = 0;
-            let depth = 0;
-            
-            if (userTime) {
-              time = Date.now() - userTime;
-            } else {
-              score = guiScore;
-              depth = guiDepth;
-              time = guiTime;
-              pv = guiPv;
-            }
-            
-            moveStack[moveStack.length - 1].score = score;
-            moveStack[moveStack.length - 1].depth = depth;
-            moveStack[moveStack.length - 1].time = time;
-            moveStack[moveStack.length - 1].pv = pv;
+            try {
+              let pv = ''
+              let time = 0;
+              let score = 0;
+              let depth = 0;
+              
+              if (userTime) {
+                time = Date.now() - userTime;
+              } else {
+                score = guiScore;
+                depth = guiDepth;
+                time = guiTime;
+                pv = guiPv;
+              }
+              
+              moveStack[moveStack.length - 1].score = score;
+              moveStack[moveStack.length - 1].depth = depth;
+              moveStack[moveStack.length - 1].time = time;
+              moveStack[moveStack.length - 1].pv = pv;
+            } catch(e) {}
           }
         }
       }
@@ -725,10 +727,8 @@ var Engine = function() {
     
     // generate only legal moves
     function generateLegalMoves() {
-      clearSearch();
-      
       let legalMoves = [];
-      let moveList = generateMoves();
+      let moveList = generateMoves(ALL_MOVES);
 
       for (let count = 0; count < moveList.length; count++) {
         if (makeMove(moveList[count].move) == 0) continue;
