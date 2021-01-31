@@ -13,7 +13,7 @@
  - PST values from Li, Cuanqi 2008, "Using AdaBoost to Implement Chinese Chess Evaluation Functions", UCLA thesis
  
 # Search
- - 50 move rule detection
+ - 60 move rule detection
  - 3 fold repetition detection
  - stand pat quiescence
  - on the fly move sorting
@@ -31,10 +31,14 @@
  
  # GUI
  - play/edit modes
+ - force move/self play
+ - unlimited undo moves
+ - flip board
  - difficulty levels
  - highlight legal moves
- -  
- - download PGN
+ - board & piece themes
+ - board sounds
+ - PGN download (UCI move format, might be opened in Xboard/Winboard)
  
  
  
