@@ -101,6 +101,39 @@ function drawBoard() {
   document.getElementById('xiangqiboard').innerHTML = chessBoard;
 }
 
+// highlight legal moves
+function highlightMoves(square) {  
+  if (document.getElementById('showMoves').checked == false) return;
+  
+  let legalMoves = engine.generateLegalMoves();
+  
+  for (let count = 0; count < legalMoves.length; count++) {
+    let move = legalMoves[count].move;
+    let sourceSquare = engine.getSourceSquare(move);
+    let targetSquare = engine.getTargetSquare(move);
+    if (square == sourceSquare) {
+      let parent = document.getElementById(targetSquare);
+      parent.style.backgroundImage = 'url("game/images/misc/legal_move.png")';
+      parent.style.opacity = '0.50';
+      if (parent.childNodes.length) {
+        parent.childNodes[0].style.opacity = '0.5';
+        parent.style.opacity = '1';
+        parent.style.backgroundImage = 'url("game/images/misc/legal_capture.png")';
+      }
+    }
+  }
+}
+
+// set bot
+function setBot(bot) {
+  botName = bot;
+  document.getElementById('current-bot-image').src = bots[bot].image;
+  fixedTime = bots[bot].time;
+  fixedDepth = bots[bot].depth;
+  book = JSON.parse(JSON.stringify(bots[bot].book));
+  document.getElementById('pgn').value = bots[bot].description;
+}
+
 // set board theme
 function setBoardTheme(theme) {
   document.getElementById('xiangqiboard').style.backgroundImage = 'url(' + theme + ')';
@@ -152,6 +185,7 @@ var repetitions = 0;
 // pick piece handler
 function dragPiece(event, square) {
   userSource = square;
+  highlightMoves(square);
 }
 
 // drag piece handler
@@ -185,19 +219,7 @@ function tapPiece(square) {
   
   if (engine.getPiece(square)) {
     document.getElementById(square).style.backgroundColor = SELECT_COLOR;
-    
-    let legalMoves = engine.generateLegalMoves();
-    for (let count = 0; count < legalMoves.length; count++) {
-      let move = legalMoves[count].move;
-      let sourceSquare = engine.getSourceSquare(move);
-      let targetSquare = engine.getTargetSquare(move);
-      if (square == sourceSquare) {
-        let parent = document.getElementById(targetSquare);
-        parent.style.backgroundImage = 'url("game/images/misc/legal_move.png")';
-        if (parent.childNodes.length)
-          parent.style.backgroundColor = 'red';
-      }
-    }
+    highlightMoves(square);
   }
   
   var clickSquare = parseInt(square, 10)
@@ -225,6 +247,8 @@ function tapPiece(square) {
 
 // engine move
 function think() {
+  if (document.getElementById('editMode').checked == true) return;
+
   engine.resetTimeControl();
 
   let timing = engine.getTimeControl();
@@ -431,5 +455,5 @@ function newGame() {
 \****************************/
 
 newGame();
-
+setBot('Wukong');
 
