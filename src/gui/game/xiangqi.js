@@ -183,8 +183,22 @@ function dropPiece(event, square) {
 function tapPiece(square) {
   drawBoard();
   
-  if (engine.getPiece(square)) 
+  if (engine.getPiece(square)) {
     document.getElementById(square).style.backgroundColor = SELECT_COLOR;
+    
+    let legalMoves = engine.generateLegalMoves();
+    for (let count = 0; count < legalMoves.length; count++) {
+      let move = legalMoves[count].move;
+      let sourceSquare = engine.getSourceSquare(move);
+      let targetSquare = engine.getTargetSquare(move);
+      if (square == sourceSquare) {
+        let parent = document.getElementById(targetSquare);
+        parent.style.backgroundImage = 'url("game/images/misc/legal_move.png")';
+        if (parent.childNodes.length)
+          parent.style.backgroundColor = 'red';
+      }
+    }
+  }
   
   var clickSquare = parseInt(square, 10)
   
