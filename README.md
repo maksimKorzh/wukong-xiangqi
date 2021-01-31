@@ -2,8 +2,8 @@
   <img src="src/gui/game/images/misc/logo.png">
 </p>
 
-<h1 align="center">Wukong JS</h1>
-<h3 align="center">Didactic javascript Chinese chess Xiangqi engine</h3>
+<h1 align="center">Wukong Xiangqi</h1>
+<h3 align="center">Didactic javascript Chinese chess engine</h3>
 <h4 align="center">by</h4>
 <h4 align="center">Code Monkey King</h4>
 <p align="center">
@@ -13,6 +13,7 @@
 </p>
 <hr>
 <p align="center">
+  <a href="https://github.com/maksimKorzh/wukongJS">WukongJS</a> |
   <a href="https://github.com/maksimKorzh/wukongJS/blob/main/docs/ABOUT.MD">About</a> |
   <a href="https://github.com/maksimKorzh/wukongJS/blob/main/docs/SPECS.MD">Tech specs</a> |
   <a href="https://github.com/maksimKorzh/wukongJS/blob/main/docs/CREDITS.MD">Credits</a> |
