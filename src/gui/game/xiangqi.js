@@ -371,6 +371,7 @@ function downloadPgn() {
   header += '[Date "' + new Date() + '"]\n';
   header += '[White "' + ((userColor == 'White') ? userName : botName) + '"]\n';
   header += '[Black "' + ((userColor == 'Black') ? userName : botName) + '"]\n';
+  header += '[Variant "xiangqi"]\n';
   header += '[Result "' + gameResult + '"]\n\n';
 
   let downloadLink = document.createElement('a');
