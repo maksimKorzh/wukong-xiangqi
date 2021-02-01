@@ -18,10 +18,12 @@
     
     <!-- Analytics -->
     <script type="text/javascript">
-      $.post('https://maksimkorzh.pythonanywhere.com/analytics/api/post', {
-        date: new Date,
-        url: window.location.href
-      });
+      if (window.location.href.includes('github')) {
+        $.post('https://maksimkorzh.pythonanywhere.com/analytics/api/post', {
+          date: new Date,
+          url: window.location.href
+        });
+      }
     </script>
     
   </head>

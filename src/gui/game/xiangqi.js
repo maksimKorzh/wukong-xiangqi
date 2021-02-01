@@ -310,7 +310,8 @@ function think() {
 
   if (botName == 'Baihua') {
     let moves = engine.generateLegalMoves();
-    bestMove = moves[Math.floor(Math.random() * moves.length)].move;
+    try { bestMove = moves[Math.floor(Math.random() * moves.length)].move;
+    } catch(e) {}
   } else {
     if (bestMove) bookMoveFlag = 1;
     else if (bestMove == 0) bestMove = engine.search(fixedDepth);
@@ -336,6 +337,12 @@ function think() {
     return;
   } // TODO: material draw?
 
+  if (engine.generateLegalMoves().length == 0) {
+    gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
+    updatePgn();
+    return;
+  }
+
   setTimeout(function() {
     movePiece(sourceSquare, targetSquare);
     drawBoard();
@@ -345,11 +352,6 @@ function think() {
       playSound(bestMove);
       updatePgn();
       userTime = Date.now();
-      
-      if (engine.generateLegalMoves().length == 0) {
-        gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
-        updatePgn();
-      }
     }
   
   }, delayMove);
@@ -403,6 +405,10 @@ function getGamePgn() {
     let moveString = engine.moveToString(move);
     let moveNumber = ((index % 2) ? '': ((index / 2 + 1) + '. '));
     let displayScore = (((moveScore / 100) == 0) ? '-0.00' : (moveScore / 100)) + '/' + moveDepth + ' ';
+    
+    if (displayScore.toString().includes('NaN') && moveScore.includes('M'))
+      displayScore = moveScore.replace('M', 'mate in ') + ' # ';
+    
     let stats = (movePv ? '(' + movePv.trim() + ')' + ' ': '') + 
                 (moveDepth ? ((moveScore > 0) ? ('+' + displayScore) : displayScore): '') +
                 Math.round(moveTime / 1000);
