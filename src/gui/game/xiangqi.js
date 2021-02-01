@@ -290,29 +290,29 @@ function getBookMove() {
 // check for game state
 function isGameOver() {
   if (engine.isRepetition()) repetitions++;
-  if (repetitions == 3) {
+  if (repetitions >= 3) {
     gameResult = '3 fold repetition ' + (engine.getSide() ? 'black' : 'red') + ' lost';
-    updatePgn();
-    return;
+    return 1;
   } else if (engine.generateLegalMoves().length == 0) {
     gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
-    updatePgn();
+    return 1;
   } else if (engine.getSixty() >= 120) {
     gameResult = '1/2-1/2 Draw by 60 rule move';
-    updatePgn();
-    return;
+    return 1;
   } // TODO: material draw?
 
   if (engine.generateLegalMoves().length == 0) {
     gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
-    updatePgn();
-    return;
+    return 1;
   }
+  
+  return 0;
 }
 
 // engine move
 function think() {
-  isGameOver();
+  if (isGameOver()) {updatePgn(); return;}
+  
   if (document.getElementById('editMode').checked == true) return;
   engine.resetTimeControl();
 
@@ -365,7 +365,8 @@ function movePiece(userSource, userTarget) {
   let moveString = engine.squareToString(userSource) +
                    engine.squareToString(userTarget);
 
-  engine.loadMoves(moveString);
+  if (isGameOver() == 0) engine.loadMoves(moveString);
+  else updatePgn();
   drawBoard();
 }
 
