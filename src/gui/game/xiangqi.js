@@ -287,10 +287,33 @@ function getBookMove() {
   return 0;
 }
 
+// check for game state
+function isGameOver() {
+  if (engine.isRepetition()) repetitions++;
+  if (repetitions == 3) {
+    gameResult = '3 fold repetition ' + (engine.getSide() ? 'black' : 'red') + ' lost';
+    updatePgn();
+    return;
+  } else if (engine.generateLegalMoves().length == 0) {
+    gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
+    updatePgn();
+  } else if (engine.getSixty() >= 120) {
+    gameResult = '1/2-1/2 Draw by 60 rule move';
+    updatePgn();
+    return;
+  } // TODO: material draw?
+
+  if (engine.generateLegalMoves().length == 0) {
+    gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
+    updatePgn();
+    return;
+  }
+}
+
 // engine move
 function think() {
+  isGameOver();
   if (document.getElementById('editMode').checked == true) return;
-
   engine.resetTimeControl();
 
   let timing = engine.getTimeControl();
@@ -317,31 +340,11 @@ function think() {
     else if (bestMove == 0) bestMove = engine.search(fixedDepth);
   }
   
-  // mating score, delay move to avoid skip playing sound
+  if (bestMove == 0) return;
   if (bookMoveFlag || fixedDepth || typeof(guiScore) == 'string') delayMove = 1000;
   
   let sourceSquare = engine.getSourceSquare(bestMove);
   let targetSquare = engine.getTargetSquare(bestMove);
-
-  if (engine.isRepetition()) repetitions++;
-  if (repetitions == 3) {
-    gameResult = '3 fold repetition ' + (engine.getSide() ? 'black' : 'red') + ' lost';
-    updatePgn();
-    return;
-  } else if (engine.generateLegalMoves().length == 0) {
-    gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
-    updatePgn();
-  } else if (engine.getSixty() >= 120) {
-    gameResult = '1/2-1/2 Draw by 60 rule move';
-    updatePgn();
-    return;
-  } // TODO: material draw?
-
-  if (engine.generateLegalMoves().length == 0) {
-    gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
-    updatePgn();
-    return;
-  }
 
   setTimeout(function() {
     movePiece(sourceSquare, targetSquare);
@@ -369,8 +372,10 @@ function movePiece(userSource, userTarget) {
 // take move back
 function undo() {
   gameResult = '*';
-  engine.takeBack();
-  drawBoard();
+  try {
+    engine.takeBack();
+    drawBoard();
+  } catch(e) {}
 }
 
 // validate move
