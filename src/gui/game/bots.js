@@ -11,7 +11,7 @@ const bots = {
   
   'CMK': {
     image: 'game/images/bots/cmk.png',
-    description: 'Author of this engine, knows rules of game\nfreesoft.for.people@gmail.com',
+    description: 'Author of this engine\nfreesoft.for.people@gmail.com',
     time: 0,
     depth: 1,
     book: [
@@ -21,7 +21,7 @@ const bots = {
   
   'HGM': {
     image: 'game/images/bots/hgm.jpg',
-    description: 'Physicist that works in basic research, plays logically\nhttps://home.hccnet.nl/h.g.muller/chess.html',
+    description: 'Computer chess programmer\nhttps://home.hccnet.nl/h.g.muller/chess.html',
     time: 0,
     depth: 2,
     book: [
@@ -29,9 +29,9 @@ const bots = {
     ]
   },
   
-  'Wantanyi': {
-    image: 'game/images/bots/wantanyi.png',
-    description: 'Chinese chess master\nhttps://www.youtube.com/channel/UChvX1XzDIPLrs4mNWMRj0vw',
+  'Haucheng': {
+    image: 'game/images/bots/Haucheng.jpg',
+    description: 'Chinese chess teacher\nhttp://www.xqinenglish.com/index.php/en/',
     time: 0,
     depth: 4,
     book: [
