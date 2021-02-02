@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Xiangqi - puzzle solver</title>
+    
+    <!-- Encoding -->
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    
+    <!-- SEO -->
+    <meta name="description" content="Didactic Chinese chess Xiangqi engine by Code Monkey King">
+    <meta name="keywords" content="play xiangqi online chinese chess engine javascript">
+    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="libs/css/bootstrap.min.css">
+    <script src="libs/js/jquery.min.js"></script>
+    <script src="libs/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Analytics -->
+    <script type="text/javascript">
+      if (window.location.href.includes('github')) {
+        $.post('https://maksimkorzh.pythonanywhere.com/analytics/api/post', {
+          date: new Date,
+          url: window.location.href
+        });
+      }
+    </script>
+    
+  </head>
+  <body style="font-family:
+               monospace; font-size: 16px;
+               background: url(game/images/misc/wallpaper.jpg);
+               background-repeat: no-repeat;
+               background-attachment: fixed;
+               background-position: center;
+               background-size: cover;
+               display: flex;
+               justify-content: center;
+               align-items: center;
+               height: 100vh;
+               "
+        
+        class="img-fluid bg-cover text-center">
+
+    <div id="main">
+      <!-- Chess board view -->
+      <div id="xiangqiboard" 
+           style="border: 1px solid black;
+                  background: url(game/images/boards/board_light.svg);
+                  background-size: contain;"
+      ></div>
+      
+      <!-- Puzzles -->
+      <div class="btn-group mt-1 mb-1" style="width: 420px;">
+        <div class="dropdown mr-1">
+          <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img src="game/images/traditional_pieces/7.svg" style="width: 25px;"></img>
+          </button>
+          <div id="puzzles" class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 420px;"></div>
+        </div>
+        <input id="fen"
+               class="form-control"
+               type="text"
+               placeholder="Select puzzle or load FEN"
+               value="4k2r1/1R7/3R3nr/2p1N4/n8/9/9/5p3/c1c1p1p2/5K3 w - - 0 1"
+        />
+        <button onclick="setPuzzle();" class="btn btn-outline-secondary ml-1">Load</button>
+      </div>
+
+      <!-- PGN -->
+      <textarea id="pgn" rows="3" name="text" class="form-control" style="width: 420px;" spellcheck="false"></textarea>
+
+    <div>
+    
+    <!-- Xiangqi engine -->
+    <script src="../engine/wukong.js"></script>
+    
+    <!-- Bots -->
+    <script src="game/puzzles.js"></script>
+
+    <!-- User input handling -->
+    <script src="game/puzzle_solver.js"></script>
+    
+    <!-- DevTools detection -->
+    <script src="libs/js/isdevtoolopen.js"> </script>
+    
+    <!-- Remove background image when DevTools are open -->
+    <script type="module">
+      // on update page when devtools are opened
+	  if (window.devtools.isOpen == 1) {
+        document.body.style.backgroundImage = '';
+      }
+      
+      // on devtools open/close
+      window.addEventListener('devtoolschange', event => {
+        if (window.devtools.isOpen == 0) {
+          document.body.style.backgroundImage = '';
+        } else if (window.devtools.isOpen == 1) {
+          document.body.style.backgroundImage = 'url(game/images/misc/wallpaper.jpg)';
+        }
+      });	    
+    </script>
+  </body>
+<html>
+
+
