@@ -7,8 +7,8 @@
 <h4 align="center">by</h4>
 <h4 align="center">Code Monkey King</h4>
 <p align="center">
-  <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a> |
-  <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">Solve puzzles</a>
+  <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">XQ puzzles</a> |
+  <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a>
 </p>
 <hr>
 <p align="center">
