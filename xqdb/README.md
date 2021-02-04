@@ -1,11 +1,8 @@
 # Xiangqi master games database
-A collection of 43878 master games from wxf.ca
-
-# Datasets
-<a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xqdb/xqdb"></a>
+A collection of <strong>43878 master games</strong> from wxf.ca
 
 # Plain HTML pages containing games encoded with DPXQ
-<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/games_html/116.html">View sample</a>
+<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/games_html/116.html">View sample</a> |
 <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/xqdb/games_html.zip">Download</a>
 
 # Games in PGN format (traditional notation):
