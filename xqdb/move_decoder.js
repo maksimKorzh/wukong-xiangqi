@@ -34,7 +34,7 @@ function processGames(indexFrom, indexTo) {
       let black = html.split('[DhtmlXQ_black]')[1].split('[/DhtmlXQ_black]')[0];
       let moveList = html.split('[DhtmlXQ_movelist]')[1].split('[/DhtmlXQ_movelist]')[0];
       let headers = '[Event "' + event + '"]\n[Red "' + red + '"]\n[Black "' + black + '"]\n\n'
-      let decode = 'international';
+      let decode = 'traditional';
       let moves = getMovelistString(moveList, decode) + '\n\n';
       let pgn = headers + moves;
 
