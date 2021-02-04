@@ -10,8 +10,8 @@ A collection of 43878 master games from wxf.ca
 
 # Games in PGN format (traditional notation):
 <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/games_pgn/xqdb_traditional.pgn">View sample</a> |
-<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/xqdb/xqdb_traditional.pgn.zip"></a>
+<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/xqdb/xqdb_traditional.pgn.zip">Download</a>
 
 # Games in PGN format (international notation):
-<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/games_pgn/xqdb_international.pgn">View sample</a>
-<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/xqdb/xqdb_international.pgn.zip"></a>
+<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/games_pgn/xqdb_international.pgn">View sample</a> |
+<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/xqdb/xqdb_international.pgn.zip">Download</a>
