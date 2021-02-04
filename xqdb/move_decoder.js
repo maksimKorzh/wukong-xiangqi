@@ -34,7 +34,7 @@ function processGames(indexFrom, indexTo) {
       let black = html.split('[DhtmlXQ_black]')[1].split('[/DhtmlXQ_black]')[0];
       let moveList = html.split('[DhtmlXQ_movelist]')[1].split('[/DhtmlXQ_movelist]')[0];
       let headers = '[Event "' + event + '"]\n[Red "' + red + '"]\n[Black "' + black + '"]\n\n'
-      let decode = 'traditional';
+      let decode = 'international';
       let moves = getMovelistString(moveList, decode) + '\n\n';
       let pgn = headers + moves;
 
@@ -144,7 +144,7 @@ function getMovelistString(m0, encoding) {
       ms += (i ? ' ' : '') + moveNumber + '. ';
       moveNumber++;
       
-      ms+=c_move(getMoveText(m[i],p,0)); //0  red
+      ms+=c_move(getMoveText(m[i],p,0)) + ' '; //0  red
     } else if ((t>=16)&&(t<=31)) ms+=c_move(getMoveText(m[i],p,1)); // black
     else {ms+='\u7740\u6CD5\u9519\u8BEF'; continue;}
     p[m[i].substr(2,2)-0]=p[m[i].substr(0,2)-0];
