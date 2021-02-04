@@ -12,7 +12,7 @@
 </p>
 <hr>
 <p align="center">
-  <a href="https://github.com/maksimKorzh/wukongJS">WukongJS</a> |
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xqdb/README.md">Games DB</a> |
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/ABOUT.MD">About</a> |
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/SPECS.MD">Tech specs</a> |
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/CREDITS.MD">Credits</a> |
