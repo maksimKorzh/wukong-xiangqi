@@ -11,8 +11,11 @@
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a>
 </p>
 <hr>
-<p align="center">
+<p aligh="center">
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xqdb/README.md">Games DB</a> |
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xiangqi_pgn_parser/README.md">PGN parser</a>
+</p>
+<p align="center">
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/ABOUT.MD">About</a> |
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/SPECS.MD">Tech specs</a> |
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/docs/CREDITS.MD">Credits</a> |
