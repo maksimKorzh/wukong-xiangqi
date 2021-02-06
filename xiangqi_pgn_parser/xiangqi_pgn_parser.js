@@ -111,31 +111,16 @@ var XiangqiPGNparser = function() {
         if (moveIndex) {
           let squares = [];
           
-          if (side == 0) {
-            for (let square = 0; square < 154; square++) {
-              let searchPiece = engine.getPiece(square);
-              if (searchPiece == CHAR_TO_PIECE[piece] && searchPiece != 15) {
-                squares.push(square);
-              }
-            }
-          } else {
-            for (let square = 154; square >= 0; square--) {
-              let searchPiece = engine.getPiece(square);
-              if (searchPiece == CHAR_TO_PIECE[piece] && searchPiece != 15) {
-                squares.push(square);
-              }
+          for (let square = 0; square < 154; square++) {
+            let searchPiece = engine.getPiece(square);
+            if (searchPiece == CHAR_TO_PIECE[piece] && searchPiece != 15) {
+              squares.push(square);
             }
           }
-          
-          if (move[0] == '＋') {
-            let index = (side == 0 ? 1 : 0);
-            sourceSquare = squares[index];
-          } else if (move[0] == '－') {
-            let index = (side == 0 ? 0 : 1);
-            sourceSquare = squares[index];
-          } else {
-            sourceSquare = squares[PAWNS_ON_FILE[move[0]]];
-          }
+
+          let index;
+          index = (side == 0 ? (move[0] == '＋' ? 0 : 1) : (move[0] == '＋' ? 1 : 0));
+          sourceSquare = squares[index];          
         }
         
         // parsed
@@ -144,6 +129,12 @@ var XiangqiPGNparser = function() {
         
         // convert move to UCI format
         let uciMove = moveToUCI(type, pieceCode, fileFrom, direction, secondNumber, sourceSquare);
+        
+        if (uciMove == 'xxxx') {
+          console.log('ERROR parsing move:', move);
+          //engine.printBoard();
+          //console.log('sourceSquare:', engine.squareToString(sourceSquare), direction, secondNumber, side);
+        }
         
         engine.loadMoves(uciMove);
         uciMoves.push(uciMove);
@@ -181,7 +172,7 @@ var XiangqiPGNparser = function() {
 
         if (direction == '＋' || direction == '－') {
           if (type == 'Ｐ' || type == 'Ｒ' || type == 'Ｃ' || type == 'Ｋ') {          
-            if (candidateSource == moveSource) {
+            if (candidateSource == moveSource) {            
               let offset = FILE[1][secondNumber]; // convert unicode to ascii
               let dirOffset = side == 0 ? ((direction == '＋') ? -offset : offset) : ((direction == '＋') ? offset : -offset)
               let rankTo = rankFrom + dirOffset;
@@ -215,8 +206,7 @@ var XiangqiPGNparser = function() {
         }
       }
     }
-    
-    console.log('ERROR: unsupported move firmat or illegal move');
+
     return 'xxxx';
   }
   

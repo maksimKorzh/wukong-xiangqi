@@ -23,5 +23,5 @@ for (let count = 0; count < uciMoves.length; count++) {
 
 // write output PGN
 let uciGame = headers + '\n\n' + moveListUCI;
-let pgnUCI = fs.writeFileSync('game.pgn', uciGame);
+let pgnUCI = fs.writeFileSync('game_uci.pgn', uciGame);
 

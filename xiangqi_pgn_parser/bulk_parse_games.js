@@ -9,16 +9,27 @@ const parser = new XiangqiPGNparser();
 let pgn = fs.readFileSync('bulk_games.pgn').toString();
 let games = pgn.split('\n\n');
 let uciGames = '';
+let gameNumber = 0;
+let gameLimit = 1000;
 
 // loop over games
 for (let count = 0; count < games.length; count++) {
+  let game = games[count];
+  var headers;
+  
   if (games[count][0] == '[') {
+    // split headers
+    headers = games[count];
+  } else if (games[count][0] == '1') {
     // convert game to UCI format
-    let headers = pgn.split('\n\n')[0];
-    let moveList = pgn.split('\n\n')[1];
+    let moveList = games[count];
     let moves = moveList.split(' ');
     let uciMoves = parser.gameToUCI(moves);
     let moveListUCI = '';
+    
+    // info
+    gameNumber++;
+    console.log('Converting game', gameNumber, 'out of', (games.length / 2) << 0, 'games');
 
     // append move numbers
     let moveNumber = 1;
@@ -31,6 +42,9 @@ for (let count = 0; count < games.length; count++) {
     // append to output PGN
     let uciGame = headers + '\n\n' + moveListUCI + '\n\n';
     uciGames += uciGame;
+    
+    // limit games
+    if (gameNumber == gameLimit) break;
   }
 }
 
