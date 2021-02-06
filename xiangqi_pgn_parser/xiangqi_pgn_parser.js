@@ -91,14 +91,8 @@ var XiangqiPGNparser = function() {
         let move = moves[count];
         let moveIndex = 0;
         
-        if (move[moveIndex] == '１' ||
-            move[moveIndex] == '２' ||
-            move[moveIndex] == '３' ||
-            move[moveIndex] == '４' ||
-            move[moveIndex] == '５' ||
-            move[moveIndex] == '＋' ||
-            move[moveIndex] == '－')
-          moveIndex = 1;
+        // TODO handle more than 2 pawns in the file
+        if (move[moveIndex] == '＋' || move[moveIndex] == '－') moveIndex = 1;
         
         // raw
         let type = move[moveIndex];
@@ -132,8 +126,6 @@ var XiangqiPGNparser = function() {
         
         if (uciMove == 'xxxx') {
           console.log('ERROR parsing move:', move);
-          //engine.printBoard();
-          //console.log('sourceSquare:', engine.squareToString(sourceSquare), direction, secondNumber, side);
         }
         
         engine.loadMoves(uciMove);

@@ -20,6 +20,10 @@ for (let count = 0; count < games.length; count++) {
   if (games[count][0] == '[') {
     // split headers
     headers = games[count];
+    
+    // filter by player (optional)
+    if (headers.includes('LIU DaHua') == false) continue;
+    
   } else if (games[count][0] == '1') {
     // convert game to UCI format
     let moveList = games[count];
@@ -44,7 +48,7 @@ for (let count = 0; count < games.length; count++) {
     uciGames += uciGame;
     
     // limit games
-    if (gameNumber == gameLimit) break;
+    //if (gameNumber == gameLimit) break;
   }
 }
 
