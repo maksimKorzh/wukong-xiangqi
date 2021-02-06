@@ -20,16 +20,19 @@ for (let count = 0; count < games.length; count++) {
   if (games[count][0] == '[') {
     // split headers
     headers = games[count];
-    
-    // filter by player (optional)
-    if (headers.includes('LIU DaHua') == false) continue;
-    
   } else if (games[count][0] == '1') {
+    // filter by player (optional)
+    //if (headers.includes('LIU DaHua') == false) continue;
+    //if (headers.includes('HU RongHua') == false) continue;
+  
     // convert game to UCI format
     let moveList = games[count];
     let moves = moveList.split(' ');
     let uciMoves = parser.gameToUCI(moves);
     let moveListUCI = '';
+    
+    // skip malformed games (optional)
+    if (uciMoves.includes('xxxx')) continue;
     
     // info
     gameNumber++;
