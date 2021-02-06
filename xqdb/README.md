@@ -19,4 +19,4 @@ A collection of <strong>43878 master games</strong> from wxf.ca
 
 # Selected games (UCI/UCCI/ICCS notation):
 <a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/xqdb/Liu_Dahua_1125_UCI_games.pgn.zip">Liu Dahua (1125 games)</a> |
-<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/xqdb/Hu_Ronghua_1391_UCI_games.pgn.zip">Hu Ronghua</a>
+<a href="https://github.com/maksimKorzh/wukong-xiangqi/blob/main/xqdb/xqdb/Hu_Ronghua_1391_UCI_games.pgn.zip">Hu Ronghua (1391 games)</a>
