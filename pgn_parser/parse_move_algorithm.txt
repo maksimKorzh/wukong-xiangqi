@@ -1,6 +1,0 @@
-1. Generate all legal moves for a side to move
-2. Extract piece color and type from the move string
-3. Filter the candidate moves in the move list by a certain piece
-4. Filter moves by source file
-5. Filter moves by target file
-6. Filter by direction
