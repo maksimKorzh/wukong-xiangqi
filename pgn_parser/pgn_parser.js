@@ -1,11 +1,20 @@
 /************************************************\
  ================================================
  
-          A very basic PGN parser for
-             Chinese chess Xiangqi
+       PGN parser for Chinese chess Xiangqi
+           (Ｃ２＝５ Ｈ８＋７ => h2e2 h9g7)
+           
+                        by
+                        
+                 Code Monkey King
  
  ===============================================
 \************************************************/
+
+/*
+      Notation characters for debugging purposes
+    Ｐ Ａ Ｅ Ｈ Ｃ Ｒ Ｋ １ ２ ３ ４ ５ ６ ７ ８ ９  ＋ ＝ －
+*/
 
 // work with file system
 const fs = require("fs")
@@ -78,7 +87,7 @@ function loadPgn(filename) {
   
   // init new game
   engine.setBoard(engine.START_FEN);
-  //engine.setBoard('5k3/9/4P4/9/4P4/9/4P4/9/4K4 w - - 0 1');
+  //engine.setBoard('5k3/9/9/9/9/9/9/9/9/3AKA3 w - - 0 1');
   engine.printBoard();
   
   for (let count = 0; count < moves.length; count++) {
@@ -101,9 +110,8 @@ function loadPgn(filename) {
       let piece = ((side == 0) ? 'R' : 'B') + move[moveIndex];
       let sourceFile = move[moveIndex + 1];
       let direction = move[2];
-      let secondNumber = move[moveIndex + 3];
-      
-      //１ ２ ３ ４ ５ ６ ７ ８ ９  ＋ ＝ －
+      let secondNumber = move[3];
+
       // find piece on the same rank
       if (moveIndex) {
         let squares = [];
@@ -125,10 +133,10 @@ function loadPgn(filename) {
         }
         
         if (move[0] == '＋') {
-          let index = (side == 0 ? 0 : 1);
+          let index = (side == 0 ? 1 : 0);
           sourceSquare = squares[index];
         } else if (move[0] == '－') {
-          let index = (side == 0 ? 1 : 0);
+          let index = (side == 0 ? 0 : 1);
           sourceSquare = squares[index];
         } else {
           sourceSquare = squares[PAWNS_ON_FILE[move[0]]];
@@ -148,7 +156,7 @@ function loadPgn(filename) {
       
       console.log('OUTPUT:', uciMove, move);
       engine.loadMoves(uciMove);
-      engine.printBoard();
+      //engine.printBoard();
       
       // change side
       side ^= 1;
@@ -174,48 +182,70 @@ function moveToUCI(type, pieceCode, fileFrom, direction, secondNumber, sourceSqu
       if (sourceSquare) {
         candidateSource = sourceSquare;
         fileFrom = MAP_FILE[candidateSource];
-        if (type == 'Ｐ') secondNumber = '１';
+        if (type == 'Ｐ' && direction == '＋') secondNumber = '１';
       } else {
         candidateSource = rankFrom * 11 + fileFrom;
       }
 
-      // Ｐ Ａ Ｅ Ｈ Ｃ Ｒ Ｋ
-      // １ ２ ３ ４ ５ ６ ７ ８ ９  ＋ ＝ －
       if (direction == '＋' || direction == '－') {
-        if (type == 'Ｐ' || type == 'Ｒ' || type == 'Ｃ' || type == 'Ｋ') {
+        if (type == 'Ｐ' || type == 'Ｒ' || type == 'Ｃ' || type == 'Ｋ') {          
           if (candidateSource == moveSource) {
             let offset = FILE[1][secondNumber]; // convert unicode to ascii
             let dirOffset = side == 0 ? ((direction == '＋') ? -offset : offset) : ((direction == '＋') ? offset : -offset)
             let rankTo = rankFrom + dirOffset;
             let fileTo = fileFrom;
-
             if ((rankTo * 11 + fileTo) == moveTarget) return engine.moveToString(move);
           }
-        } else {direction = '＝'; console.log('here@@@@', direction); }
-      } else if (direction == '＝') {console.log('here1111', direction); 
-        let fileTo = FILE[side][secondNumber];
+        } else if (type == 'Ａ' || type == 'Ｈ' || type == 'Ｅ') {
+          let fileTo = FILE[side][secondNumber];
 
-        if (candidateSource == moveSource) {
-          let rankTo = MAP_RANK[moveTarget];
-          let candidateTarget = rankTo * 11 + fileTo;
-          if (candidateTarget == moveTarget) {
-            if (type == 'Ａ' || type == 'Ｈ' || type == 'Ｅ') {
+          if (candidateSource == moveSource) {  
+            let rankTo = MAP_RANK[moveTarget];
+            let candidateTarget = rankTo * 11 + fileTo;
+
+            if (candidateTarget == moveTarget) {
               if (initialDirection == '－') {
                 if (side == 0 ? (moveSource - moveTarget) < 0 : (moveSource - moveTarget) > 0) return engine.moveToString(move);
               } else if (initialDirection == '＋') {
                 if (side == 0 ? (moveSource - moveTarget) > 0 : (moveSource - moveTarget) < 0) return engine.moveToString(move);
               } 
-            } else return engine.moveToString(move);
+            }
           }
+        }
+      } else if (direction == '＝') {
+        let fileTo = FILE[side][secondNumber];
+
+        if (candidateSource == moveSource) {
+          let rankTo = MAP_RANK[moveTarget];
+          let candidateTarget = rankTo * 11 + fileTo;
+          if (candidateTarget == moveTarget) return engine.moveToString(move);
         } 
       }
     }
   }
   
-  //console.log('ERROR: no move matches');
+  console.log('ERROR: no move matches');
   return 'xxxx';
 }
 
 // main driver
 loadPgn('test.pgn');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

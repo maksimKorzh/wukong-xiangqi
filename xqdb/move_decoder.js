@@ -4,6 +4,10 @@
             Script to decode moves from
                 DHTML Xiangqi games
                (http://www.dpxq.com)
+               
+                        by
+                        
+                 Code Monkey King
  
  ===============================================
 \************************************************/
