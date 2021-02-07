@@ -66,13 +66,13 @@
           </button>
           <div id="games" class="scrollable-menu dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 420px;"></div>
         </div>
-          
-                
+
         <!-- Game controls -->
         <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="firstMove();"><<</button>
         <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="previousMove();"><</button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="think();">Engine</button>
         <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="nextMove();">></button>
-        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold" onclick="lastMove()">>></button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr" onclick="lastMove()">>></button>
         
         <!-- Change pieces bitmaps -->
         <div class="dropdown ml-1">
@@ -119,6 +119,7 @@
             
             <!-- Download PGN -->
             <div class="text-center">
+              <button class="btn btn-sm btn-outline-success mb-1" onclick="uploadPgn();">Load own PGN</button>
               <button class="btn btn-sm btn-outline-success" onclick="downloadPgn();">Download PGN</button>
             </div>
           </div>

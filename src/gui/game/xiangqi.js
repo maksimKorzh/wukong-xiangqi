@@ -458,7 +458,7 @@ function downloadPgn() {
   let header = '';
   if (guiFen) header += '[FEN "' + guiFen + '"]\n';
   header += '[Event "Friendly chess game"]\n';
-  header += '[Site "https://maksimkorzh.github.io/wukongJS/wukong.html"]\n';
+  header += '[Site "https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html"]\n';
   header += '[Date "' + new Date() + '"]\n';
   header += '[White "' + ((userColor == 'White') ? userName : botName) + '"]\n';
   header += '[Black "' + ((userColor == 'Black') ? userName : botName) + '"]\n';

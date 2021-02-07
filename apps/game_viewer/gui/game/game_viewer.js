@@ -23,6 +23,7 @@ console.log('  type "engine" for public API reference');
 \****************************/
 
 var moveStack = {count: 0, moves: []};
+var currentGameId = 0;
 
 /****************************\
  ============================
@@ -193,11 +194,9 @@ function dropPiece(event, square) {
     userTime = Date.now() - userTime;
     document.getElementById(square).style.backgroundColor = SELECT_COLOR;
     playSound(valid);
-    updatePgn();
   }
   
   event.preventDefault();
-  if (valid) setTimeout(function() { think(); }, 100);
 }
 
 // click event handler
@@ -225,10 +224,7 @@ function tapPiece(square) {
     if (engine.getPiece(square) && valid) {
       document.getElementById(square).style.backgroundColor = engine.SELECT_COLOR;
       playSound(valid);
-      updatePgn();
     }
-
-    if (valid) setTimeout(function() { think(); }, 1);
   }
 }
 
@@ -277,16 +273,10 @@ function getBookMove() {
 // check for game state
 function isGameOver() {
   if (engine.isRepetition()) repetitions++;
-  if (repetitions >= 3) {
-    gameResult = '3 fold repetition ' + (engine.getSide() ? 'black' : 'red') + ' lost';
-    return 1;
-  } else if (engine.generateLegalMoves().length == 0) {
+  if (engine.generateLegalMoves().length == 0) {
     gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
     return 1;
-  } else if (engine.getSixty() >= 120) {
-    gameResult = '1/2-1/2 Draw by 60 rule move';
-    return 1;
-  } // TODO: material draw?
+  }
 
   if (engine.generateLegalMoves().length == 0) {
     gameResult = (engine.getSide() ? '1-0' : '0-1') + ' mate';
@@ -298,34 +288,19 @@ function isGameOver() {
 
 // engine move
 function think() {
-  if (isGameOver()) {updatePgn(); return;}
-  
-  if (document.getElementById('editMode').checked == true) return;
-  engine.resetTimeControl();
-
   let timing = engine.getTimeControl();
   let startTime = new Date().getTime();
-  
-  if (fixedTime) {
-    fixedDepth = 64;
-    timing.timeSet = 1;
-    timing.time = fixedTime * 1000;
-    timing.stopTime = startTime + timing.time
-    engine.setTimeControl(timing);
-  }
+
+  fixedDepth = 64;
+  timing.timeSet = 1;
+  timing.time = 1000;
+  timing.stopTime = startTime + timing.time
+  engine.setTimeControl(timing);
   
   let bookMoveFlag = 0;
   let delayMove = 0;
-  let bestMove = getBookMove();
-
-  if (botName == 'Baihua') {
-    let moves = engine.generateLegalMoves();
-    try { bestMove = moves[Math.floor(Math.random() * moves.length)].move;
-    } catch(e) {}
-  } else {
-    if (bestMove) bookMoveFlag = 1;
-    else if (bestMove == 0) bestMove = engine.search(fixedDepth);
-  }
+  
+  bestMove = engine.search(fixedDepth);
   
   if (bestMove == 0) return;
   if (bookMoveFlag || fixedDepth || typeof(guiScore) == 'string') delayMove = 1000;
@@ -340,8 +315,8 @@ function think() {
     if (engine.getPiece(targetSquare)) {
       document.getElementById(targetSquare).style.backgroundColor = SELECT_COLOR;             
       playSound(bestMove);
-      updatePgn();
       userTime = Date.now();
+      
     }
   
   }, delayMove);
@@ -353,7 +328,6 @@ function movePiece(userSource, userTarget) {
                    engine.squareToString(userTarget);
 
   if (isGameOver() == 0) engine.loadMoves(moveString);
-  else updatePgn();
   drawBoard();
 }
 
@@ -364,7 +338,6 @@ function updateBoard() {
   engine.setSixty(moveStack.moves[moveStack.count].sixty);
   engine.setHashKey(moveStack.moves[moveStack.count].hashKey);
   engine.setKingSquare(JSON.parse(moveStack.moves[moveStack.count].kingSquare));
-  engine.printBoard();
   drawBoard();
 }
 
@@ -459,33 +432,59 @@ function updatePgn() {
 
 // download PGN
 function downloadPgn() {
-  let userName = prompt('Enter your name:', 'Player');
-  if (userName == null) return;
-  let userColor = (guiSide == 0) ? 'White' : 'Black';
-  
-  if (userColor != 'White' && userColor != 'Black') {
-    alert('Wrong color, please try again');
-    return;
-  }
-
   let header = '';
   if (guiFen) header += '[FEN "' + guiFen + '"]\n';
-  header += '[Event "Friendly chess game"]\n';
-  header += '[Site "https://maksimkorzh.github.io/wukongJS/wukong.html"]\n';
-  header += '[Date "' + new Date() + '"]\n';
-  header += '[White "' + ((userColor == 'White') ? userName : botName) + '"]\n';
-  header += '[Black "' + ((userColor == 'Black') ? userName : botName) + '"]\n';
-  header += '[Variant "xiangqi"]\n';
-  header += '[Result "' + gameResult + '"]\n\n';
+  header += '[Event "' + Games[currentGameId].event + '"]\n';
+  header += '[Site "https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html"]\n';
+  header += '[Red "' + Games[currentGameId].red + '"]\n';
+  header += '[Black "' + Games[currentGameId].black + '"]\n\n';
 
   let downloadLink = document.createElement('a');
   downloadLink.id = 'download';
-  downloadLink.download = ((userColor == 'White') ? (userName + '_vs_' + botName + '.pgn') : (botName + '_vs_' + userName + '.pgn'));
+  downloadLink.download =  Games[currentGameId].red + '_vs_' + Games[currentGameId].black + '.pgn';
   downloadLink.hidden = true;
-  downloadLink.href = window.URL.createObjectURL( new Blob([header + getGamePgn() + ((gameResult == '*') ? ' *' : '')], {type: 'text'}));
+  downloadLink.href = window.URL.createObjectURL( new Blob([header + getGamePgn()], {type: 'text'}));
   document.body.appendChild(downloadLink);
   downloadLink.click();
   downloadLink.remove();
+}
+
+// upload PGN
+function uploadPgn() {
+  let examplePgn = `[Event "Jiafun Cup National Champion 1994"]
+[Red "Lv Qin"]
+[Black "LIN HongMin"]
+
+1. h2e2 h9g7 2. h0g2 i9h9 3. i0h0 b9c7 4. g3g4 c6c5 5. b0a2 a6a5 6. b2c2 c7b5 7. a0a1 b5a3 8. c2c5 a9a6 9. a1b1 a6d6 10. h0h6 b7d7 11. c5c7 g9e7 12. g2f4 f9e8 13. f4g6 d6d5 14. b1b6 d5b5 15. b6a6 b5c5 16. c7b7 d7c7 17. a6b6 a3c2 18. e3e4 c2e3 19. g0i2 a5a4 20. e4e5 e6e5 21. g6e5 g7f5 22. h6h3 h9g9 23. d0e1 a4a3 24. a2c1 c5c3 25. b6c6 c3c6 26. e5c6 c7c1 27. h3h7 e3c4 28. c6e7 f5e7 29. b7b9 e9f9 30. h7e7 g9g6 31. e7e4 c4d6 32. e4f4 d6f7 33. b9b4 c1c7 34. e2f2 c7e7 35. b4e4 f9f8 36. e4e3 g6c6 37. f4e4`;
+  let pgn = document.getElementById('pgn').value;
+  
+  if (pgn.includes(':')) {
+    alert('Paste PGN file below board, see the one below to figure out the proper format:\n\n' + examplePgn);
+    return;
+  }
+  
+  try {
+    let headers = pgn.split('\n\n')[0];
+    let moves = pgn.split('\n\n')[1].split(' ');
+    let event = headers.split('Event "')[1].split('"')[0];
+    let red = headers.split('Red "')[1].split('"')[0];
+    let black = headers.split('Black "')[1].split('"')[0];
+    let moveList = '';
+    
+    for (let count = 0; count < moves.length; count++)
+      if (moves[count].length > 3) moveList += moves[count] + ' ';
+    
+    Games.push({
+      id: Games.length + 1,
+      event: event,
+      red: red,
+      black: black,
+      moves: moveList
+    });
+    
+    addGame(Games.length - 1);
+    newGame(Games.length - 1);
+  } catch(e) {}
 }
 
 
@@ -500,6 +499,7 @@ function downloadPgn() {
 // start new game
 function newGame(id) {
   id = parseInt(id);
+  currentGameId = id;
   moveStack = {count: 0, moves: []};
   guiScore = 0;
   guiDepth = 0;
@@ -509,7 +509,9 @@ function newGame(id) {
   userTime = 0;
   allowBook = 1;
   engine.setBoard(engine.START_FEN);
-  document.getElementById('pgn').value = '';
+  document.getElementById('pgn').value = 'Red: ' + Games[id].red +
+                                         '\nBlack: ' + Games[id].black +
+                                         '\nEvent: ' + Games[id].event;
   repetitions = 0;
 
   moveStack.moves.push({
@@ -548,20 +550,22 @@ function newGame(id) {
  ============================              
 \****************************/
 
+// add game to list
+function addGame(count) {
+  let game = Games[count];
+  let gameItem = document.createElement('li');
+  gameItem.id = count;
+  gameItem.classList.add('list-group-item-action');
+  gameItem.classList.add('btn');
+  gameItem.textContent = game['id'] + '. ' + game['red'] + ' - ' + game['black'];
+  gameItem.setAttribute('onclick', 'newGame(this.id)');
+  games.appendChild(gameItem);
+}
+
 // init game list
 (function initGames() {
   let games = document.getElementById('games');
-  
-  for (let count = 0; count < Games.length; count++) {
-    let game = Games[count];
-    let gameItem = document.createElement('li');
-    gameItem.id = count;
-    gameItem.classList.add('list-group-item-action');
-    gameItem.classList.add('btn');
-    gameItem.textContent = game['id'] + '. ' + game['red'] + ' - ' + game['black'];
-    gameItem.setAttribute('onclick', 'newGame(this.id)');
-    games.appendChild(gameItem);
-  }
+  for (let count = 0; count < Games.length; count++) addGame(count);
 }());
 
 newGame(0);
