@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Xiangqi - play vs computer</title>
+    
+    <!-- Encoding -->
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    
+    <!-- SEO -->
+    <meta name="description" content="Didactic Chinese chess Xiangqi engine by Code Monkey King">
+    <meta name="keywords" content="play xiangqi online chinese chess engine javascript">
+    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="libs/css/bootstrap.min.css">
+    <script src="libs/js/jquery.min.js"></script>
+    <script src="libs/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Analytics -->
+    <script type="text/javascript">
+      if (window.location.href.includes('github')) {
+        $.post('https://maksimkorzh.pythonanywhere.com/analytics/api/post', {
+          date: new Date,
+          url: window.location.href
+        });
+      }
+    </script>
+    
+  </head>
+  <body style="font-family:
+               monospace; font-size: 16px;
+               background: url(game/images/misc/wallpaper.jpg);
+               background-repeat: no-repeat;
+               background-attachment: fixed;
+               background-position: center;
+               background-size: cover;
+               display: flex;
+               justify-content: center;
+               align-items: center;
+               height: 100vh;
+               "
+        
+        class="img-fluid bg-cover text-center">
+
+    <div id="main">
+      <!-- Chess board view -->
+      <div id="xiangqiboard" 
+           style="border: 1px solid black;
+                  background: url(game/images/boards/board_light.svg);
+                  background-size: contain;"
+      ></div>
+      
+      <div class="btn-group mt-1 mb-1" style="width: 420px;">
+        <style type="text/css">
+          .scrollable-menu {
+            height: 420;
+            max-height: 466px;
+            overflow-x: hidden;
+          }
+        </style>
+        
+        <!-- Games -->
+        <div class="dropdown mr-1">
+          <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <image id="current-bot-image" src="game/images/bots/wukong.png" style="width: 25px;"></img>
+          </button>
+          <div id="games" class="scrollable-menu dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 420px;"></div>
+        </div>
+          
+                
+        <!-- Game controls -->
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="firstMove();"><<</button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="previousMove();"><</button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="nextMove();">></button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold" onclick="lastMove()">>></button>
+        
+        <!-- Change pieces bitmaps -->
+        <div class="dropdown ml-1">
+          <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <image id="current-promoted-image" src="game/images/romanized_pieces/14.svg" style="width: 25px;"></img>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right text-right" aria-labelledby="dropdownMenuButton" style="width: 202px;">
+            <li class="list-group-item-action mb-1" onclick="setBoardTheme('game/images/boards/board_light.svg');">
+              <button class="btn">Light theme
+                <img src="game/images/boards/board_light.svg" class="mr-2" style="width: 40px;"></img>
+              </button>
+            </li>
+            <li class="list-group-item-action mb-1" onclick="setBoardTheme('game/images/boards/board_dark.svg');">
+              <button class="btn">Dark theme
+              <img src="game/images/boards/board_dark.svg" class="mr-2" style="width: 40px;"></img>
+              </button>
+            </li>
+            <li class="list-group-item-action mb-1" onclick="setPieceTheme('romanized_pieces');">
+              <button class="btn">Romanized
+                <img src="game/images/romanized_pieces/14.svg" class="mr-2" style="width: 40px;"></img>
+              </button>
+            </li>
+            <li class="list-group-item-action mb-1" onclick="setPieceTheme('traditional_pieces');">
+              <button class="btn">Traditional
+                <img src="game/images/traditional_pieces/7.svg" class="mr-2" style="width: 40px;"></img>
+              </button>
+            </li>
+            
+            <div class="dropdown-divider"></div>
+            
+            <!-- Show legal moves -->
+            <div class="col text-left">
+              <input type="checkbox" id="showMoves" class="mr-2" checked="true"/>Show moves
+            </div>
+            
+            <div class="dropdown-divider"></div>
+            
+            <!-- Edit mode -->
+            <div class="col text-left" hidden>
+              <input type="checkbox" id="editMode" class="mr-2" checked="true"/>Edit mode
+            </div>
+            
+            <div class="dropdown-divider"></div>
+            
+            <!-- Download PGN -->
+            <div class="text-center">
+              <button class="btn btn-sm btn-outline-success" onclick="downloadPgn();">Download PGN</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- PGN -->
+      <textarea id="pgn" rows="3" name="text" class="form-control" style="width: 420px;" spellcheck="false"></textarea>
+
+    <div>
+    
+    <!-- Xiangqi engine -->
+    <script src="../engine/wukong.js"></script>
+    
+    <!-- Games -->
+    <script src="game/games.js"></script>
+
+    <!-- User input handling -->
+    <script src="game/game_viewer.js"></script>
+    
+    <!-- DevTools detection -->
+    <script src="libs/js/isdevtoolopen.js"> </script>
+    
+    <!-- Remove background image when DevTools are open -->
+    <script type="module">
+      // on update page when devtools are opened
+	  if (window.devtools.isOpen == 1) {
+        document.body.style.backgroundImage = '';
+      }
+      
+      // on devtools open/close
+	    window.addEventListener('devtoolschange', event => {
+	      if (window.devtools.isOpen == 0) {
+          document.body.style.backgroundImage = '';
+        } else if (window.devtools.isOpen == 1) {
+          document.body.style.backgroundImage = 'url(game/images/misc/wallpaper.jpg)';
+        }
+      });	    
+    </script>
+  </body>
+<html>
+
+
