@@ -28,6 +28,10 @@
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/issues">Support</a>
 </p>
 <hr>
+<p align="center">
+  <a href="https://www.patreon.com/code_monkey_king"><strong>DONATE</strong></a>
+</p>
+<hr>
 <h3 align="center">Contact</h3>
 <p align="center">
   <a href="https://www.patreon.com/code_monkey_king"><strong>DONATE</strong></a><br>
