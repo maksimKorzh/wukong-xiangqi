@@ -518,7 +518,7 @@ function newGame(id) {
   userTime = 0;
   allowBook = 1;
   engine.setBoard(engine.START_FEN);
-  document.getElementById('pgn').value = 'Red: ' + Games[id].red +
+  document.getElementById('pgn').value = '  Red: ' + Games[id].red +
                                          '\nBlack: ' + Games[id].black +
                                          '\nEvent: ' + Games[id].event;
   repetitions = 0;
