@@ -339,6 +339,13 @@ function updateBoard() {
   engine.setHashKey(moveStack.moves[moveStack.count].hashKey);
   engine.setKingSquare(JSON.parse(moveStack.moves[moveStack.count].kingSquare));
   drawBoard();
+  let move = moveStack.moves[moveStack.count].move;
+  let targetSquare = engine.getTargetSquare(move);
+  
+  if (engine.getPiece(targetSquare) && moveStack.count > 0 && moveStack.count < moveStack.moves.length - 1) {
+    document.getElementById(targetSquare).style.backgroundColor = SELECT_COLOR;
+    playSound(move);
+  }
 }
 
 // show first move of the game
@@ -515,6 +522,7 @@ function newGame(id) {
   repetitions = 0;
 
   moveStack.moves.push({
+    'move': 0,
     'position': JSON.stringify(engine.getBoard()),
     'side': engine.getSide(),
     'sixty': engine.getSixty(),
@@ -526,9 +534,11 @@ function newGame(id) {
   
   for (let count = 0; count < moves.length; count++) {
     let move = moves[count];
+    let encodedMove = engine.moveFromString(move);
     engine.loadMoves(move);
     
     moveStack.moves.push({
+      'move': encodedMove, 
       'position': JSON.stringify(engine.getBoard()),
       'side': engine.getSide(),
       'sixty': engine.getSixty(),
