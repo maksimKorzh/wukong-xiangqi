@@ -319,7 +319,7 @@ function think() {
       
     }
   
-  }, delayMove);
+  }, 0);
 }
 
 // move piece in GUI
@@ -492,6 +492,8 @@ function uploadPgn() {
     addGame(Games.length - 1);
     newGame(Games.length - 1);
   } catch(e) {}
+  
+  firstMove();
 }
 
 
@@ -520,7 +522,6 @@ function newGame(id) {
                                          '\nBlack: ' + Games[id].black +
                                          '\nEvent: ' + Games[id].event;
   repetitions = 0;
-
   moveStack.moves.push({
     'move': 0,
     'position': JSON.stringify(engine.getBoard()),
@@ -548,7 +549,7 @@ function newGame(id) {
     
     moveStack.count++;
   }
-  
+
   firstMove();
 }
 

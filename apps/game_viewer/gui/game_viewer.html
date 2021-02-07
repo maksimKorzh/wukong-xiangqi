@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>Xiangqi - play vs computer</title>
+    <title>Xiangqi - view games</title>
     
     <!-- Encoding -->
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
@@ -108,7 +108,10 @@
               <input type="checkbox" id="showMoves" class="mr-2" checked="true"/>Show moves
             </div>
             
-            <div class="dropdown-divider"></div>
+            <!-- Flip board -->
+            <div class="col text-left">
+              <input type="checkbox" id="flipBoard" class="mr-2" onchange="flipBoard();"/>Flip board
+            </div>
             
             <!-- Edit mode -->
             <div class="col text-left" hidden>
