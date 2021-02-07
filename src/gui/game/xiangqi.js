@@ -236,7 +236,7 @@ function tapPiece(square) {
     clickLock = 0;
     
     if (engine.getPiece(square) && valid) {
-      document.getElementById(square).style.backgroundColor = engine.SELECT_COLOR;
+      document.getElementById(square).style.backgroundColor = SELECT_COLOR;
       playSound(valid);
       updatePgn();
     }
