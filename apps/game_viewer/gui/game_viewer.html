@@ -68,11 +68,12 @@
         </div>
 
         <!-- Game controls -->
-        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="firstMove();"><<</button>
-        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="previousMove();"><</button>
-        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="think();">Engine</button>
-        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="nextMove();">></button>
-        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr" onclick="lastMove()">>></button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="firstMove();" title="Go to first move"><<</button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="previousMove();" title="Go to previous move"><</button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="think();" title="Make engine move">E</button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="updateBoard()" title="Restore current position after user/engine analysis">R</button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr-1" onclick="nextMove();" title="Go to next move">></button>
+        <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold mr" onclick="lastMove()" title="Go to last move">>></button>
         
         <!-- Change pieces bitmaps -->
         <div class="dropdown ml-1">
