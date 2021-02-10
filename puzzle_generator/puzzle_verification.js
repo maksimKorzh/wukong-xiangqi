@@ -17,6 +17,7 @@ function verifyPuzzles() {
     let game = games[count];
     let verifiedPuzzle = solvePuzzle(game.fen);
     
+    game.id = 'puzzle_' + count;
     game.title = verifiedPuzzle.title;
     game.fen = verifiedPuzzle.fen;
   }  

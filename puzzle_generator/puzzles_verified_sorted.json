@@ -1,4 +1,4 @@
-const Puzzles = [
+[
   {
     "description": "LE Thien Vi - BI BingJian\nWorld Xiangqi Championships 1997 ",
     "fen": "2Rckab1C/4a4/4R3n/p5p2/9/2N6/2P5P/C5r2/4K4/2B2A3 w - - 0 1",
@@ -20315,4 +20315,4 @@ const Puzzles = [
     "id": "puzzle_3385",
     "title": "Mate in ? moves"
   }
-];
+]

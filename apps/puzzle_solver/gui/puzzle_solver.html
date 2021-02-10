@@ -52,11 +52,20 @@
       
       <!-- Puzzles -->
       <div class="btn-group mt-1 mb-1" style="width: 420px;">
+        <style type="text/css">
+          .scrollable-menu {
+            height: 420;
+            max-height: 466px;
+            overflow-x: hidden;
+          }
+        </style>
+        
+        <!-- Puzzles -->
         <div class="dropdown mr-1">
           <button class="btn btn-outline-secondary text-dark bg-light font-weight-bold dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img src="game/images/traditional_pieces/7.svg" style="width: 25px;"></img>
+            <image id="current-bot-image" src="game/images/bots/wukong.png" style="width: 25px;"></img>
           </button>
-          <div id="puzzles" class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 420px;"></div>
+          <div id="puzzles" class="scrollable-menu dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 420px;"></div>
         </div>
         <input id="fen"
                class="form-control"

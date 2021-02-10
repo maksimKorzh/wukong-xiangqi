@@ -310,7 +310,7 @@ function think() {
       if (currentPuzzleId >= Puzzles.length) currentPuzzleId = 0;
       setPuzzle('puzzle_' + currentPuzzleId);  
       return;
-    }, 1000);
+    }, 5000);
   }
   
   //if (document.getElementById('editMode').checked == true) return;
@@ -493,7 +493,7 @@ function downloadPgn() {
  ============================              
 \****************************/
 
-// init puzzles
+/* init puzzles
 function initPuzzles() {
   for (let index = 0; index < Puzzles.length; index++) {
     let id = Puzzles[index].id;
@@ -510,7 +510,7 @@ function initPuzzles() {
 
     document.getElementById('puzzles').innerHTML += puzzle;
   }
-}
+}*/
 
 // set puzzle
 function setPuzzle(puzzleId) {
@@ -528,7 +528,7 @@ function setPuzzle(puzzleId) {
     currentPuzzleId = parseInt(puzzleId.split('_')[1]);
     puzzle = Puzzles[currentPuzzleId];
     engine.setBoard(puzzle.fen);
-    document.getElementById('pgn').value = puzzle.description;
+    document.getElementById('pgn').value = 'puzzle #' + (currentPuzzleId + 1) + ': ' + puzzle.title + '\n' + puzzle.description;
   } else {
     let fen = document.getElementById('fen').value;
     engine.setBoard(fen);
@@ -549,7 +549,24 @@ function setPuzzle(puzzleId) {
  ============================              
 \****************************/
 
-initPuzzles();
+// add puzzle to list
+function addPuzzle(count) {
+  let puzzle = Puzzles[count];
+  let puzzleItem = document.createElement('li');
+  puzzleItem.id = 'puzzle_' + count;
+  puzzleItem.classList.add('list-group-item-action');
+  puzzleItem.classList.add('btn');
+  puzzleItem.textContent = (count + 1) + '. ' + puzzle['title'];
+  puzzleItem.setAttribute('onclick', 'setPuzzle(this.id)');
+  puzzles.appendChild(puzzleItem);
+}
+
+// init game list
+(function initPuzzles() {
+  let puzzles = document.getElementById('puzzles');
+  for (let count = 0; count < Puzzles.length; count++) addPuzzle(count);
+}());
+
 setPuzzle('puzzle_0');
 
 
