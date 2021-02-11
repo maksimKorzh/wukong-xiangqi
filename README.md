@@ -15,7 +15,7 @@
 </p>
 <hr>
 <h3 align="center">Snippets to embed xiangqi apps int your website</h3>
-```
+```txt
 <!-- Play Xiangqi -->
 <div align="center">
   <iframe id="inlineFrameExample"
