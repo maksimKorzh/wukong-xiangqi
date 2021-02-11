@@ -15,7 +15,7 @@
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">Solve puzzles</a>
 </p>
 <hr>
-<h3 align="center">Snippets to embed xiangqi apps int your website</h3>
+<h3 align="center">Snippets to embed xiangqi apps into your website</h3>
 <hr>
 
     <!-- Play Xiangqi -->
@@ -55,8 +55,8 @@
 <h3 align="center">Games DB & Utils</h3>
 <p align="center">
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xqdb">Games DB</a> |
-  <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xiangqi_pgn_parser">PGN parser</a>
-  <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/opening_book_generator">Opening book generator</a>
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xiangqi_pgn_parser">PGN parser</a> |
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/opening_book_generator">Opening book generator</a> |
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/puzzle_generator">Puzzle generator</a>
 </p>
 <hr>
