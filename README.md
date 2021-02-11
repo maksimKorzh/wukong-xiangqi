@@ -10,9 +10,9 @@
 <h3 align="center">Apps</h3>
   
 <p align="center">
-  <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a>
+  <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a> |
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">View games</a> |
-  <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">Solve puzzles</a> |
+  <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">Solve puzzles</a>
 </p>
 <hr>
 <h3 align="center">Snippets to embed xiangqi apps int your website</h3>
