@@ -8,6 +8,17 @@
 <h4 align="center">Code Monkey King</h4>
 <hr>
 <h3 align="center">Apps</h3>
+
+<div align="center">
+  <iframe id="inlineFrameExample"
+    title="Inline Frame Example"
+    width="425"
+    height="600"
+    style="border: 0px solid white"
+    src="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">
+  </iframe>
+</div>
+
 <p align="center">
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">View games</a> |
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">Solve puzzles</a> |
