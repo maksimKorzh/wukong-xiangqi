@@ -10,9 +10,9 @@
 <h3 align="center">Apps</h3>
   
 <p align="center">
+  <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a>
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">View games</a> |
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">Solve puzzles</a> |
-  <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a>
 </p>
 <hr>
 <h3 align="center">Snippets to embed xiangqi apps int your website</h3>
@@ -29,6 +29,17 @@
       </iframe>
     </div>
 
+    <!-- Game viewer -->
+    <div align="center">
+      <iframe id="inlineFrameExample"
+        title="Inline Frame Example"
+        width="420"
+        height="595"
+        style="border: 0px solid white"
+        src="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">
+      </iframe>
+    </div>
+    
     <!-- Puzzle solver -->
     <div align="center">
       <iframe id="inlineFrameExample"
@@ -40,22 +51,13 @@
       </iframe>
     </div>
 
-    <!-- Game viewer -->
-    <div align="center">
-      <iframe id="inlineFrameExample"
-        title="Inline Frame Example"
-        width="420"
-        height="595"
-        style="border: 0px solid white"
-        src="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">
-      </iframe>
-    </div>
-
 <hr>
-<h3 align="center">Utils</h3>
+<h3 align="center">Games DB & Utils</h3>
 <p align="center">
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xqdb">Games DB</a> |
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xiangqi_pgn_parser">PGN parser</a>
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/opening_book_generator">Opening book generator</a>
+  <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/puzzle_generator">Puzzle generator</a>
 </p>
 <hr>
 <h3 align="center">Misc</h3>
