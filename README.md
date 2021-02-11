@@ -14,6 +14,43 @@
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a>
 </p>
 <hr>
+<h3 align="center">Snippets to embed xiangqi apps int your website</h3>
+```html
+<!-- Play Xiangqi -->
+<div align="center">
+  <iframe id="inlineFrameExample"
+    title="Inline Frame Example"
+    width="425"
+    height="600"
+    style="border: 0px solid white"
+    src="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">
+  </iframe>
+</div>
+
+<!-- Puzzle solver -->
+<div align="center">
+  <iframe id="inlineFrameExample"
+    title="Inline Frame Example"
+    width="420"
+    height="595"
+    style="border: 0px solid white"
+    src="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">
+  </iframe>
+</div>
+
+<!-- Game viewer -->
+<div align="center">
+  <iframe id="inlineFrameExample"
+    title="Inline Frame Example"
+    width="420"
+    height="595"
+    style="border: 0px solid white"
+    src="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">
+  </iframe>
+</div>
+```
+
+<hr>
 <h3 align="center">Utils</h3>
 <p align="center">
   <a href="https://github.com/maksimKorzh/wukong-xiangqi/tree/main/xqdb">Games DB</a> |
