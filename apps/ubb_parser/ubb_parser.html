@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Xiangqi - UBB parser</title>
+    
+    <!-- Encoding -->
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    
+    <!-- SEO -->
+    <meta name="description" content="parse xiangqi UBB format">
+    <meta name="keywords" content="parse xiangqi UBB format Dhtml dpxq.com">
+    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="libs/css/bootstrap.min.css">
+    <script src="libs/js/jquery.min.js"></script>
+    <script src="libs/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Analytics -->
+    <script type="text/javascript">
+      if (window.location.href.includes('github')) {
+        $.post('https://maksimkorzh.pythonanywhere.com/analytics/api/post', {
+          date: new Date,
+          url: window.location.href
+        });
+      }
+    </script>
+    
+  </head>
+  <body style="font-family:
+               monospace; font-size: 16px;               
+               background-repeat: no-repeat;
+               background-attachment: fixed;
+               background-position: center;
+               background-size: cover;
+               display: flex;
+               justify-content: center;
+               align-items: center;
+               height: 100vh;
+               "
+        
+        class="img-fluid bg-cover text-center">
+
+    <div id="main">
+      <h3 align="center">UBB parser</h3>
+      <!-- Input UBB -->
+      <textarea id="ubb" class="form-control" style="width: 800px;" rows="20" placeholder="[DhtmlXQ]
+[DhtmlXQ_title]China-HeilongJiang ZHAO GuoRong (L) China-LiaoNing KE YongQing[/DhtmlXQ_title]
+[DhtmlXQ_event]Zhongli Cup TV fast game Champion[/DhtmlXQ_event]
+[DhtmlXQ_red]ZHAO GuoRong[/DhtmlXQ_red]\n[DhtmlXQ_black]KE YongQing[/DhtmlXQ_black]
+[DhtmlXQ_result]L[/DhtmlXQ_result]
+[DhtmlXQ_movelist]7747706279678070262563641927102289882042885872742735232435232425582812102825102017270010666510146564146409194224191374732575627475352023272364672373707335327455322267693948554729476966131660422223030486856686230386850304858747658786040543440535504106058384050473763533444504148485142485751612764612424555424686466587757687694626242355563363767763737767736356666947676823336858635366564839586859485646534346364363685863535868536368586353586849592624536324545949685863604150606654744859363766363738365658685666[/DhtmlXQ_movelist]
+[/DhtmlXQ]"></textarea>
+      
+      <!-- Actions -->
+      <div class="btn-group mt-2">
+        <button class="btn btn-outline-secondary" onclick="ubb2txt()">UBB to TXT</button>
+      </div>
+    <div>
+    
+    <!-- UBB to TXT -->
+    <script src="scripts/ubb2txt.js"></script>
+  </body>
+<html>
+
+
