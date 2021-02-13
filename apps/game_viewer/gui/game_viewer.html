@@ -46,7 +46,7 @@
       <!-- Chess board view -->
       <div id="xiangqiboard" 
            style="border: 1px solid black;
-                  background: url(game/images/boards/board_light.svg);
+                  background: url(game/images/boards/board-ccbridge.png);
                   background-size: contain;"
       ></div>
       
@@ -81,6 +81,11 @@
             <image id="current-promoted-image" src="game/images/romanized_pieces/14.svg" style="width: 25px;"></img>
           </button>
           <div class="dropdown-menu dropdown-menu-right text-right" aria-labelledby="dropdownMenuButton" style="width: 202px;">
+            <li class="list-group-item-action mb-1" onclick="setBoardTheme('game/images/boards/board-ccbridge.png');">
+              <button class="btn">CCBridge
+                <img src="game/images/boards/board-ccbridge.png" class="mr-2" style="width: 40px;"></img>
+              </button>
+            </li>
             <li class="list-group-item-action mb-1" onclick="setBoardTheme('game/images/boards/board_light.svg');">
               <button class="btn">Light theme
                 <img src="game/images/boards/board_light.svg" class="mr-2" style="width: 40px;"></img>

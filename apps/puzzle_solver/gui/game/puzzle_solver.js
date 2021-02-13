@@ -80,7 +80,7 @@ function drawBoard() {
       let square = rank * 11 + file;
       let piece = engine.getPiece(square);
       var pieceImage = '<img style="width: 44px" draggable="true"';
-      pieceImage += 'src="game/images/' + pieceFolder + '/' + piece + '.svg"></img>';
+      pieceImage += 'src="game/images/' + pieceFolder + '/' + piece + '.png"></img>';
 
       if (engine.squareToString(square) != 'xx') {
         chessBoard += 

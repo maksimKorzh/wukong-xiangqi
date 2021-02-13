@@ -59,6 +59,7 @@ function flipBoard() {
 // render board in browser
 function drawBoard() {
   var chessBoard = '<table cellspacing="0"><tbody>'
+  let isCCBridge = document.getElementById('xiangqiboard').style.backgroundImage.includes('ccbridge');
   
   // board table
   for (let row = 0; row < 14; row++) {
@@ -78,7 +79,7 @@ function drawBoard() {
       let square = rank * 11 + file;
       let piece = engine.getPiece(square);
       var pieceImage = '<img style="width: 44px" draggable="true"';
-      pieceImage += 'src="game/images/' + pieceFolder + '/' + piece + '.svg"></img>';
+      pieceImage += 'src="game/images/' + pieceFolder + '/' + piece + (isCCBridge ? '.png' : '.svg') + '"></img>';
 
       if (engine.squareToString(square) != 'xx') {
         chessBoard += 
@@ -125,6 +126,7 @@ function highlightMoves(square) {
 // set board theme
 function setBoardTheme(theme) {
   document.getElementById('xiangqiboard').style.backgroundImage = 'url(' + theme + ')';
+  drawBoard();
 }
 
 // set piece theme
