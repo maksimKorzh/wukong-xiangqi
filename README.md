@@ -7,7 +7,7 @@
 <h4 align="center">by</h4>
 <h4 align="center">Code Monkey King</h4>
 <hr>
-<h3 align="center">Stand-alone apps</h3>
+<h3 align="center">Standalone apps</h3>
 <p align="center">
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a> |
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">View games</a> |
