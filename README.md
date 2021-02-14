@@ -8,49 +8,13 @@
 <h4 align="center">Code Monkey King</h4>
 <hr>
 <h3 align="center">Apps</h3>
-  
 <p align="center">
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a> |
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">View games</a> |
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">Solve puzzles</a>
 </p>
 <hr>
-<h3 align="center">Snippets to embed xiangqi apps into your website</h3>
-<hr>
-
-    <!-- Play Xiangqi -->
-    <div align="center">
-      <iframe id="inlineFrameExample"
-        title="Inline Frame Example"
-        width="425"
-        height="600"
-        style="border: 0px solid white"
-        src="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">
-      </iframe>
-    </div>
-
-    <!-- Game viewer -->
-    <div align="center">
-      <iframe id="inlineFrameExample"
-        title="Inline Frame Example"
-        width="420"
-        height="595"
-        style="border: 0px solid white"
-        src="https://maksimkorzh.github.io/wukong-xiangqi/apps/game_viewer/gui/game_viewer.html">
-      </iframe>
-    </div>
-    
-    <!-- Puzzle solver -->
-    <div align="center">
-      <iframe id="inlineFrameExample"
-        title="Inline Frame Example"
-        width="420"
-        height="595"
-        style="border: 0px solid white"
-        src="https://maksimkorzh.github.io/wukong-xiangqi/apps/puzzle_solver/gui/puzzle_solver.html">
-      </iframe>
-    </div>
-
+<h3 align="center"><a href="https://maksimkorzh.github.io/interactive-xiangqi-apps/apps/embed.html">Interactive Xiangqi diagrams</a></h3>
 <hr>
 <h3 align="center">Games DB & Utils</h3>
 <p align="center">
