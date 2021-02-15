@@ -1,5 +1,5 @@
 # Board representation
- - 0x88 board representation
+ - 11x14 array based board representation
  - 32-bit Zobrizt hashing
 
 # Move generator
