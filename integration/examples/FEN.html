@@ -1,0 +1,61 @@
+<h3 align="center">Press "Ctrl-Shift-I" to open</h3>
+<h3 align="center">developer tools console to see the engine's output</h3>
+
+<!-- Import engine -->
+<script src="wukong.js"></script>
+
+<!-- Main driver -->
+<script>
+
+  /****************************\
+   ============================
+ 
+     GUI & Engine interaction
+       based on FEN strings
+
+   ============================              
+  \****************************/
+
+  // init engine instance
+  const engine = new Engine();
+
+  // Convert GUI position into FEN string
+  // let fen = GUIBoard.getPosition()  // return FEN string
+
+  // INPUT: init starting position or take FEN input from GUI
+  console.log('Input FEN:', engine.START_FEN);
+  engine.setBoard('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1');
+  
+  // print internal engine's board
+  console.log('Converted to this internal board representation:')
+  engine.printBoard();
+  
+  // fixed depth search (7 plies aka half moves)
+  console.log('Now engine searches for the best move:');
+  let bestMove = engine.search(7);
+  console.log('Encoded move returned by engine.search():', bestMove);
+  
+  // make move on internal engine's board
+  engine.makeMove(bestMove);
+  
+  // generate FEN string from resulting positions
+  let fen = engine.generateFen();
+  
+  // print updated internal board
+  console.log('Internal board after move has been made:');
+  engine.printBoard();
+  console.log('Output FEN:', fen);
+  
+  // update board in GUI
+  // GUIBoard.setPosition(fen)
+</script>
+
+
+
+
+
+
+
+
+
+
