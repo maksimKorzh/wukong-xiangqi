@@ -131,7 +131,7 @@ console.log('Encoded move returned by engine.search():', bestMove);
 
 # Make move on internal engine's board
 ```js
-engine.makeMove(bestMove);
+engine.makeMove(bestMove); // bestMove is integer type, e.g. 354411 which means "h2e2"
 engine.printBoard();
 
 /*
