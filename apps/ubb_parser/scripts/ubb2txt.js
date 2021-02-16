@@ -54,8 +54,13 @@ function ubb2txt() {
       
       var binit;
       
+      // parse initial board position
       if (tagName == 'binit') binit = data;
+      
+      // parse main line
       else if (tagName == 'movelist') moveList = getMovelistString(data, 'international', binit).split(' ').filter(item => item.length);
+      
+      // parse variations
       else if (tagName == 'move') {
         let moveNumber, id;
         if (data.split(']')[0].split('_').length == 3) {
@@ -67,7 +72,10 @@ function ubb2txt() {
           moveNumber: moveNumber, 
           moves: getMovelistString(data.split(']')[1], 'international', binit).split(' ').filter(item => item.length)
         });
-      } else if (tagName == 'comment') comments.push({
+      }
+      
+      // parse comments
+      else if (tagName == 'comment') comments.push({
         referer: data.split(']')[0].split('_'),
         comments: data.split(']')[1]
       });
@@ -84,11 +92,12 @@ function ubb2txt() {
       comments: ''
     });
     
+    // map comments
     for (let commCount = 0; commCount < comments.length; commCount++) {
       let comment = comments[commCount];
-      if (comment.referer.length == 1) {
+      if (comment.referer.length == 1) { // to main line
         if (parseInt(comment.referer[0]) == (count + 1)) gameTree[gameTree.length - 1].comments = comment.comments;
-      } else if (comment.referer.length == 2) {
+      } else if (comment.referer.length == 2) { // to variation
         let commId = parseInt(comment.referer[0]);
         
         for (let varCount = 0; varCount < variations.length; varCount++) {
@@ -122,7 +131,7 @@ function ubb2txt() {
         variationMoves += variationMove + ' ';
       }
       
-      variationMoves = '\n ' + VARIATION[variationCount] + '. ' + variationMoves;
+      variationMoves = /*'\n ' + VARIATION[variationCount] + '. ' +*/'variation:' + variationMoves;
       
       try {
         let variationComment = variation.comments;
