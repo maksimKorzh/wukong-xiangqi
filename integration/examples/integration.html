@@ -1,0 +1,165 @@
+<h3 align="center">Press "Ctrl-Shift-I" to open</h3>
+<h3 align="center">developer tools console to see the engine's output</h3>
+
+<!-- Import engine -->
+<script src="wukong.js"></script>
+
+<script>
+  /****************************\
+   ============================
+   
+        PARSE/GENERATE FEN
+          
+   ============================              
+  \****************************/
+
+  // test FENs
+  const fens = [
+    'rheakaehr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RHEAKAEHR w - - 0 1',
+    'r1ea1a3/4kh3/2h1e4/pHp1p1p1p/4c4/6P2/P1P2R2P/1CcC5/9/2EAKAE2 w - - 0 1',
+    '1ceak4/9/h2a5/2p1p3p/5cp2/2h2H3/6PCP/3AE4/2C6/3A1K1H1 w - - 0 1',
+    '5a3/3k5/3aR4/9/5r3/5h3/9/3A1A3/5K3/2EC2E2 w - - 0 1',
+    'CRH1k1e2/3ca4/4ea3/9/2hr5/9/9/4E4/4A4/4KA3 w - - 0 1',
+    'R1H1k1e2/9/3aea3/9/2hr5/2E6/9/4E4/4A4/4KA3 w - - 0 1',
+    'C1hHk4/9/9/9/9/9/h1pp5/E3C4/9/3A1K3 w - - 0 1',
+    '4ka3/4a4/9/9/4H4/p8/9/4C3c/7h1/2EK5 w - - 0 1',
+    '2e1ka3/9/e3H4/4h4/9/9/9/4C4/2p6/2EK5 w - - 0 1',
+    '1C2ka3/9/C1Hae1h2/p3p3p/6p2/9/P3P3P/3AE4/3p2c2/c1EAK4 w - - 0 1',
+    'ChH1k1e2/c3a4/4ea3/9/2hr5/9/9/4C4/4A4/4KA3 w - - 0 1'
+  ];
+
+  // GUI board
+  var Board = [
+    [" "," "," ","r"," "," ","E","H"," "],
+    [" "," "," ","r","K"," "," ","R"," "],
+    [" "," "," "," ","E"," "," "," "," "],
+    ["P"," "," "," ","P"," ","P"," ","P"],
+    [" "," "," "," "," "," "," "," "," "],
+    [" "," "," "," "," "," "," "," "," "],
+    ["p"," ","p"," ","p"," "," "," ","p"],
+    [" "," ","h"," ","c"," ","h"," "," "],
+    [" "," "," "," ","k"," "," ","C"," "],
+    [" "," ","e","a"," ","a","C"," "," "]
+  ];
+
+  // active color
+  var sideToMove = 'r';
+
+  // print GUI board
+  function printBoard() {
+    console.log('GUI board representation:');
+    let boardString = '';
+    
+    for (let rank = 9; rank >= 0;rank--) {
+      for (let file = 8; file >= 0; file--) {
+        if (file == 8) boardString += rank + '  ';
+        boardString += (Board[rank][file] != ' ' ? Board[rank][file] : '.') + ' ';
+      }
+      
+      boardString += '\n'
+    }
+    
+    boardString += '\n   a b c d e f g h i\n';
+    boardString += '\n   Side to move: ' + sideToMove
+    
+    console.log(boardString);
+  }
+
+  // reset board
+  function resetBoard() {
+    // reset position
+    for (let rank = 9; rank >= 0;rank--) {
+      for (let file = 8; file >= 0; file--) {
+        Board[rank][file] = ' ';
+      }
+    }
+
+    // reset side to move
+    sideToMove = '';
+  }
+
+  // set GUI board position from FEN string
+  function parseFen(fen) {
+    resetBoard();
+    index = 0;
+    
+    // parse position
+    for (let rank = 9; rank >= 0;rank--) {
+      for (let file = 8; file >= 0; file--) {
+        // parse pieces
+        if ((fen[index].charCodeAt() >= 'a'.charCodeAt() &&
+             fen[index].charCodeAt() <= 'z'.charCodeAt()) || 
+            (fen[index].charCodeAt() >= 'A'.charCodeAt() &&
+             fen[index].charCodeAt() <= 'Z'.charCodeAt())) {
+          Board[rank][file] = fen[index];
+          index++;
+        }
+        
+        // parse empty squares
+        if (fen[index].charCodeAt() >= '0'.charCodeAt() &&
+            fen[index].charCodeAt() <= '9'.charCodeAt()) {
+          var offset = parseInt(fen[index]);
+          if (Board[rank][file] == ' ') file++;
+          file -= offset;
+          index++;
+        }
+        
+        // parse end of rank
+        if (fen[index] == '/') index++;
+      }
+    }
+    
+    // parse side to move
+    index++;
+    sideToMove = fen[index];
+  }
+
+  // convert GUI board position to FEN string
+  function generateFen() {
+    let fen = '';
+    
+    for (let rank = 9; rank >= 0;rank--) {
+      let empty = 0;
+
+      for (let file = 8; file >= 0; file--) {
+        let piece = Board[rank][file];
+        
+        if (piece == ' ') empty++;
+        if (piece != ' ') {
+          fen += (empty ? empty : '') + piece;
+          empty = 0;
+        }
+      }
+      
+      if (empty) fen += empty;
+      empty = 0;
+      if (rank > 0) fen += '/';
+    }
+
+    fen += ' ' + (sideToMove == 'b' ? 'b' : 'w');
+    fen += ' ' + '- - 0 1'
+    return fen;
+  }
+
+
+  /****************************\
+   ============================
+   
+               TESTS
+          
+   ============================              
+  \****************************/
+
+  console.log('Hardcoded board position');
+  printBoard();
+  
+  // parse/generate FEN
+  for (let index = 0; index < fens.length; index++) {
+    let fen = fens[index];
+    console.log('\nparsing FEN: ', fen);
+    parseFen(fen);
+    printBoard();
+    console.log('genarating FEN: ', generateFen());
+    console.log('  verification: ', fen);
+  }
+</script>

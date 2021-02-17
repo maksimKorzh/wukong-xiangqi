@@ -322,7 +322,7 @@ var Engine = function() {
     
     // generate FEN string
     function generateFen() {
-      let pieces = [0, 'P', 'A', 'B', 'N', 'C', 'R', 'K', 'p', 'a', 'b', 'n', 'c', 'r', 'k'];
+      let pieces = [0, 'P', 'A', 'E', 'H', 'C', 'R', 'K', 'p', 'a', 'e', 'h', 'c', 'r', 'k'];
       let fen = '';
       
       for (let rank = 0; rank < 14; rank++) {
