@@ -3607,19 +3607,45 @@
   if (!viewedit) var viewedit=false;
   if (isSP||Mobile||getvar('viewurl')=='edit') document.write('<scr'+'ipt type="text/javascr'+'ipt" src="'+DhtmlXQimgpath+'DhtmlXQ_www_dpxq_com_save.js"><\/scr'+'ipt>');
   else execLoad();
-  
-  document.write('<textarea id="ubb" style="position: absolute; top: 0px; left: 500px; width: 100%; height: 100%" placeholder="paste UBB game here..."></textarea>')
-  document.write('<button onclick="UBB2TXT();" style="position: relative; top: 350px; left: 395px; height: 35px; font-size: 16px" >UBB to TXT</button>')
-  document.write('<textarea id="txt" style="position: absolute; top: 390px; left: 500px; width: 100%; height: 100%" placeholder="converted game would be displayed here..."></textarea>')
 
-</script>
-<script>
-  // import UBB game
+
+  /****************************\
+   ============================
+ 
+          UBB to TXT parser
+
+   ============================              
+  \****************************/
+  
+  document.write('<textarea id="ubb" style="position: absolute; top: 0px; left: 500px; width: 855px; height: 380px;" placeholder="paste UBB game here..."></textarea>');
+  document.write('<button onclick="UBB2TXT();" style="position: relative; top: 350px; left: 395px; height: 35px; font-size: 16px" >UBB to TXT</button>');
+  document.write('<textarea id="txt" style="position: absolute; top: 390px; left: 500px; width: 855px; height: 260px;" placeholder="converted game would be displayed here..."></textarea>');
+  
+  function processMoves(count) {
+    let moveList = document.getElementById('m_text');
+    if (count == 50/*moveList.childNodes.length*/) return;
+    
+    let move = moveList.childNodes[count];
+    if (move.id && move.id.includes('0') == false) {
+      move.onmouseup();
+      
+      let moveNumber = document.getElementById('m_' + move.id.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('') + ' ';
+      let moveText = document.getElementById('m_' + move.id.split('_')[1] + '_m').innerHTML;
+      let comment = document.getElementById('c_text').value.split('\n\n').join(''); comment = comment.length ? '\n\n ' + comment + '\n\n' : '';
+    
+      TXT.value += '> variation: ' + document.getElementById('v_text').childNodes.length + '< ';
+      TXT.value += moveNumber + moveText + comment;
+    }
+    
+    processMoves(count + 1);
+  }
+
   function UBB2TXT() {
     UBB = document.getElementById('ubb').value;
+    TXT = document.getElementById('txt');
     initdata();
+    processMoves(0);
   }
-  
 </script>
 </body>
 </html>
