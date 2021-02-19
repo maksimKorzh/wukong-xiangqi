@@ -3650,7 +3650,7 @@
       count = oldCount + 1;
       move = moveList.childNodes[count];
       
-      TXT.value += 'end of variation\n';
+      TXT.value += '\n';
     }
 
     if (move == undefined) return;
@@ -3662,7 +3662,15 @@
       let moveComment = document.getElementById('c_text').value.split('\n\n').join('');
       let moveVariations = document.getElementById('v_text').childNodes;
       
-      //alert()
+      // previous move
+      /*let prevNumber = document.getElementById('m_' + (parseInt(move.id.split('_')[1]) - 1) + '_n').innerHTML.split('&nbsp;').join('');
+      let prevText = document.getElementById('m_' + (parseInt(move.id.split('_')[1]) - 1) + '_m').innerHTML;
+      let prevComment = document.getElementById('c_text').value.split('\n\n').join('');
+      
+      if (TXT.value.slice(TXT.value.length - 6, TXT.value.length - 1).includes(prevText) == false)
+        TXT.value += '\n' + prevNumber + prevText + ' ' + (prevComment ? '\n' + prevComment + '\n\n' : '');
+      */
+      
       TXT.value += moveNumber + moveText + ' ' + (moveComment ? '\n' + moveComment + '\n\n' : '');
 
       if (moveVariations.length > 1) {
@@ -3673,10 +3681,8 @@
             clickBack.push(move.id);
             oldCount = count;
             variation.click();
-            
-            //nextVariation += 2;
         
-            TXT.value += '\nvariation: ';
+            TXT.value += '\n';
             
             let moveNumber = document.getElementById('m_' + move.id.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('');
             let moveText = document.getElementById('m_' + move.id.split('_')[1] + '_m').innerHTML;
@@ -3693,7 +3699,7 @@
     
     setTimeout(function() {
       process(count + 1);
-    }, 300);
+    }, 100);
   }
 
   function UBB2TXT() {
