@@ -3620,26 +3620,27 @@
   document.write('<textarea id="ubb" style="position: absolute; top: 0px; left: 500px; width: 855px; height: 380px;" placeholder="paste UBB game here..."></textarea>');
   document.write('<button onclick="UBB2TXT();" style="position: relative; top: 350px; left: 395px; height: 35px; font-size: 16px" >UBB to TXT</button>');
   document.write('<textarea id="txt" style="position: absolute; top: 390px; left: 500px; width: 855px; height: 260px;" placeholder="converted game would be displayed here..."></textarea>');
-  
- var clickBack = '';  // move where variation occurred
+
+  var clickBack = '';   // move where variation occurred
   var oldCount = 0;    // count to resume move list from
+  var clickBack = [];
   
   function process(count) {
     let moveList = document.getElementById('m_text');
     let move = moveList.childNodes[count];
     
     // end of variation/game
-    if (move == undefined) {
-      if (clickBack != '') {
-        try {
-          document.getElementById(clickBack).onmouseup();
-          document.getElementById('var_0_1_0').click();
-          count = oldCount + 1;
-          move = moveList.childNodes[count];
-        } catch(e) {}
-      } //else return;
+    if (move == undefined && clickBack != '') {
+      //console.log(count, moveList.childNodes.length)
+      document.getElementById(clickBack[clickBack.length - 1]).onmouseup();
+      clickBack.pop();
+      //console.log('popped:', clickBack);
+      document.getElementById('v_text').childNodes[0].click();
+      count = oldCount + 1;
+      move = moveList.childNodes[count];
     }
 
+    if (move == undefined) return;
     if (move.id && move.id != 'move_0') {
       move.onmouseup();
       
@@ -3649,24 +3650,26 @@
       let moveVariations = document.getElementById('v_text').childNodes;
       
       //alert()
-      TXT.value += moveNumber + moveText + (moveComment ? '\n' + moveComment + '\n\n' : '');
+      TXT.value += moveNumber + moveText + ' ' + (moveComment ? '\n' + moveComment + '\n\n' : '');
 
       if (moveVariations.length > 1) {
         for (let variationCount = 0; variationCount < moveVariations.length; variationCount++) {
           let variation = moveVariations[variationCount];
-          if (variation.id != undefined && variation.id != 'var_0_1_0') {
-            clickBack = move.id;
+          
+          if (variation.id != undefined && variation.id != document.getElementById('v_text').childNodes[0].id) {
+            clickBack.push(move.id);
+            //console.log('pushed:', clickBack);
             oldCount = count;
             variation.click();
             
-            alert('variation')
-            TXT.value += 'variation:';
+            //alert('variation')
+            TXT.value += '\nvariation: ';
             
             let moveNumber = document.getElementById('m_' + move.id.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('');
             let moveText = document.getElementById('m_' + move.id.split('_')[1] + '_m').innerHTML;
             let moveComment = document.getElementById('c_text').value.split('\n\n').join('');
             
-            TXT.value += moveNumber + moveText + (moveComment ? '\n' + moveComment + '\n\n' : '');
+            TXT.value += moveNumber + moveText + ' ' + (moveComment ? '\n' + moveComment + '\n\n' : '\n');
             //console.log('HIT VARIATION', node.id)
             break;
             
@@ -3677,7 +3680,7 @@
     
     setTimeout(function() {
       process(count + 1);
-    }, 100);
+    }, 1000);
   }
 
   function UBB2TXT() {
