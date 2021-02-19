@@ -3621,139 +3621,8 @@
   document.write('<button onclick="UBB2TXT();" style="position: relative; top: 350px; left: 395px; height: 35px; font-size: 16px" >UBB to TXT</button>');
   document.write('<textarea id="txt" style="position: absolute; top: 390px; left: 500px; width: 855px; height: 260px;" placeholder="converted game would be displayed here..."></textarea>');
   
-  var Game = [];
-  var Variations = [];
-  var lastMove = 0;
-  var variationLines = [];
-  var variationCount = 0;
-  
-  function processVariation(count, startMove) {
-    let moveList = document.getElementById('m_text');
-    let move = moveList.childNodes[count];
-    
-    // end of variation/game
-    if (move == undefined) return;
-
-    if (move.id && move.id != 'move_0') {
-      if (startMove == undefined) processVariation(count + 1, startMove);
-      
-      move.onmouseup();
-      
-      let moveNumber = document.getElementById('m_' + move.id.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('');
-      let moveText = document.getElementById('m_' + move.id.split('_')[1] + '_m').innerHTML;
-      let moveComment = document.getElementById('c_text').value.split('\n\n').join('');
-      let moveVariations = document.getElementById('v_text').childNodes;
-      let variationNodes = [];
-      
-      if (moveVariations.length > 1) {
-        console.log('found subvariation, damn...')
-        moveVariations.forEach((node) => {
-          if (node.id != undefined && node.id != 'var_0_1_0') {
-            variationNodes.push(node);
-          }
-        });
-      }
-      
-      Variations.push({
-        startMove: startMove,
-        moveCount: count,
-        moveDiv: move,
-        number: moveNumber,
-        move: moveText,
-        comment: moveComment,
-        variations: variationNodes
-      });
-    }
-    
-    //processVariation(count + 1, startMove);
-    
-    setTimeout(function() {
-      processVariation(count + 1, startMove);
-    }, 80);
-  }
-  
-  function processVariations(count) {
-    if (Game.length == count) return
-    let move = Game[count];
-    
-    if (move.variations.length) {  
-      move.moveDiv.onmouseup();
-      move.variations[0].click();
-      
-      //console.log(move.moveDiv, move.variations[0], count)
-      
-      //document.getElementById('move_7').onmouseup();
-      //document.getElementById('var_0_7_299').click();
-
-      processVariation(move.moveCount, move.moveCount);
-      
-      move.moveDiv.onmouseup();
-      document.getElementById('var_0_1_0').click();
-    }
-      
-    processVariations(count + 1);
-    
-    /*setTimeout(function() {
-      processVariations(count + 1);
-    }, 0);*/
-  }
-  
-  function processMoves(count) {
-    let moveList = document.getElementById('m_text');
-    let move = moveList.childNodes[count];
-    
-    // end of variation/game
-    if (move == undefined) return;
-
-    if (move.id && move.id != 'move_0') {
-      move.onmouseup();
-      
-      let moveNumber = document.getElementById('m_' + move.id.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('');
-      let moveText = document.getElementById('m_' + move.id.split('_')[1] + '_m').innerHTML;
-      let moveComment = document.getElementById('c_text').value.split('\n\n').join('');
-      let moveVariations = document.getElementById('v_text').childNodes;
-      let variationNodes = [];
-      
-      if (moveVariations.length > 1) {
-        moveVariations.forEach((node) => {
-          if (node.id != undefined && node.id != 'var_0_1_0') {
-            variationNodes.push(node);
-          }
-        });
-      }
-      
-      Game.push({
-        moveCount: count,
-        moveDiv: move,
-        number: moveNumber,
-        move: moveText,
-        comment: moveComment,
-        variations: variationNodes
-      });
-      
-      //TXT.value += ' ' + moveNumber + moveText + comment;
-    }
-    
-    processMoves(count + 1);
-    
-    /*setTimeout(function() {
-      if (variationLines.length == 0) processMoves(count + 1);
-    }, 0);*/
-  }
-
-//////////////////////////////////////////////////////////////////////////////////
-
-  function UBB2TXT() {
-    UBB = document.getElementById('ubb').value;
-    TXT = document.getElementById('txt');
-    initdata();
-    //processMoves(0);
-    //processVariations(0);
-    process(0, 'move_5')
-  }
-  
-  var clickBack = '';  // move where variation occurred
-  var oldCount = 0;
+ var clickBack = '';  // move where variation occurred
+  var oldCount = 0;    // count to resume move list from
   
   function process(count) {
     let moveList = document.getElementById('m_text');
@@ -3762,11 +3631,12 @@
     // end of variation/game
     if (move == undefined) {
       if (clickBack != '') {
-        document.getElementById(clickBack).onmouseup();
-        document.getElementById('var_0_1_0').click();
-        count = oldCount + 1;
-        move = moveList.childNodes[count];
-        clickBack = '';
+        try {
+          document.getElementById(clickBack).onmouseup();
+          document.getElementById('var_0_1_0').click();
+          count = oldCount + 1;
+          move = moveList.childNodes[count];
+        } catch(e) {}
       } //else return;
     }
 
@@ -3778,24 +3648,43 @@
       let moveComment = document.getElementById('c_text').value.split('\n\n').join('');
       let moveVariations = document.getElementById('v_text').childNodes;
       
-      console.log(moveNumber + moveText);
-      
+      //alert()
+      TXT.value += moveNumber + moveText + (moveComment ? '\n' + moveComment + '\n\n' : '');
+
       if (moveVariations.length > 1) {
-        moveVariations.forEach((variation) => {
+        for (let variationCount = 0; variationCount < moveVariations.length; variationCount++) {
+          let variation = moveVariations[variationCount];
           if (variation.id != undefined && variation.id != 'var_0_1_0') {
             clickBack = move.id;
             oldCount = count;
             variation.click();
+            
+            alert('variation')
+            TXT.value += 'variation:';
+            
+            let moveNumber = document.getElementById('m_' + move.id.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('');
+            let moveText = document.getElementById('m_' + move.id.split('_')[1] + '_m').innerHTML;
+            let moveComment = document.getElementById('c_text').value.split('\n\n').join('');
+            
+            TXT.value += moveNumber + moveText + (moveComment ? '\n' + moveComment + '\n\n' : '');
             //console.log('HIT VARIATION', node.id)
+            break;
             
           }
-        });
+        }
       }
     }
     
     setTimeout(function() {
       process(count + 1);
-    }, 500);
+    }, 100);
+  }
+
+  function UBB2TXT() {
+    UBB = document.getElementById('ubb').value;
+    TXT = document.getElementById('txt');
+    initdata();
+    process(0, 'move_5')
   }
 </script>
 </body>
