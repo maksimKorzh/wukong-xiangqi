@@ -3622,6 +3622,7 @@
   document.write('<textarea id="txt" style="position: absolute; top: 390px; left: 500px; width: 855px; height: 260px;" placeholder="converted game would be displayed here..."></textarea>');
   
   var Game = [];
+  var Variations = [];
   var lastMove = 0;
   var variationLines = [];
   var variationCount = 0;
@@ -3634,7 +3635,7 @@
     if (move == undefined) return;
 
     if (move.id && move.id != 'move_0') {
-      if (startMove == undefined) processVariation(count + 1);
+      if (startMove == undefined) processVariation(count + 1, startMove);
       
       move.onmouseup();
       
@@ -3642,17 +3643,26 @@
       let moveText = document.getElementById('m_' + move.id.split('_')[1] + '_m').innerHTML;
       let moveComment = document.getElementById('c_text').value.split('\n\n').join('');
       let moveVariations = document.getElementById('v_text').childNodes;
-      //let variationNodes = [];
+      let variationNodes = [];
       
-      /*if (moveVariations.length > 1) {
+      if (moveVariations.length > 1) {
+        console.log('found subvariation, damn...')
         moveVariations.forEach((node) => {
           if (node.id != undefined && node.id != 'var_0_1_0') {
             variationNodes.push(node);
           }
         });
-      }*/
+      }
       
-      console.log(' ' + moveNumber + moveText);
+      Variations.push({
+        startMove: startMove,
+        moveCount: count,
+        moveDiv: move,
+        number: moveNumber,
+        move: moveText,
+        comment: moveComment,
+        variations: variationNodes
+      });
     }
     
     processVariation(count + 1, startMove);
@@ -3663,19 +3673,19 @@
   }
   
   function processVariations(count) {
-    if (Game.length == count) { console.log('end of variation'); return};
+    if (Game.length == count) return
     let move = Game[count];
     
     if (move.variations.length) {  
       move.moveDiv.onmouseup();
       move.variations[0].click();
       
-      console.log(move.moveDiv, move.variations[0])
+      //console.log(move.moveDiv, move.variations[0], count)
       
       //document.getElementById('move_7').onmouseup();
       //document.getElementById('var_0_7_299').click();
 
-      processVariation(move.moveCount, move.moveDiv.id);
+      processVariation(move.moveCount, move.moveCount);
       
       move.moveDiv.onmouseup();
       document.getElementById('var_0_1_0').click();
@@ -3735,8 +3745,8 @@
     UBB = document.getElementById('ubb').value;
     TXT = document.getElementById('txt');
     initdata();
-    //processMoves(0);
-    //processVariations(0);
+    processMoves(0);
+    processVariations(0);
   }
 </script>
 </body>
