@@ -3622,6 +3622,8 @@
   document.write('<textarea id="txt" style="position: absolute; top: 390px; left: 500px; width: 855px; height: 260px;" placeholder="converted game would be displayed here..."></textarea>');
 
   var clickBack = [];   // resume move
+  var storeCount = 0;
+  var readCount = 0;
   
   function process(count) {
     var moveList = document.getElementById('m_text');
@@ -3631,34 +3633,40 @@
     if (move == undefined && clickBack.length) {
       let lastClickMove = document.getElementById(clickBack[clickBack.length - 1].moveId);
       let lastClickCount = clickBack[clickBack.length - 1].moveCount;
-      console.log('read clickBack:', lastClickMove.id, lastClickCount)
+      
+      
+      readCount++;
+      console.log('read clickBack:', lastClickMove.id, lastClickCount, 'read', readCount)
       //alert('clickBack ' + JSON.stringify(clickBack[clickBack.length - 1]))
       lastClickMove.onmouseup();
       
+      // get current variation index
+      let currentVariation = 0;
+      document.getElementById('v_text').childNodes.forEach((item, index) => {
+        try {
+        if (item.style.backgroundColor == 'rgb(49, 106, 197)') currentVariation = index;
+        } catch(e) {}
+      });
       
-      
-      /*try {
-        //nextVariation += 2;
-        document.getElementById('v_text').childNodes[20].click();
-        //alert('try next variotion')
-        clickBack.push({moveId: lastClickMove, moveCount: lastClickCount});
+      try {
+        currentVariation += 2
+        document.getElementById('v_text').childNodes[currentVariation].click();
+        console.log('side variation', currentVariation)
+        //clickBack.push({moveId: lastClickMove, moveCount: lastClickCount});
       } catch(e) {
         document.getElementById('v_text').childNodes[0].click();
-        //nextVariation = 0;
-        //alert('failed next variation')
-        // experiment
-        //clickBack.pop();
-      }*/
-            
-      document.getElementById('v_text').childNodes[0].click();
+        clickBack.pop();
+        console.log('end of side variations')
+      }
       
-      //if ((count == document.getElementById('m_text').childNodes.length) && document.getElementById('v_text').childNodes.length > 1) alert(document.getElementById('v_text').childNodes.length);
+      // only first variation
+      //document.getElementById('v_text').childNodes[0].click();
+      //clickBack.pop();     
       
       count = lastClickCount + 1;
       move = moveList.childNodes[count];
       
       TXT.value += '\n';
-      clickBack.pop();
     }
 
     if (move == undefined) {
@@ -3668,40 +3676,46 @@
       } else {
         console.log('error: game should continue...', clickBack);
         console.log('it sucks:', move, count, 'movelist:', document.getElementById('m_text').childNodes)
-        
+        //alert('sucks')
         //hack
         
-        
         let lastClickMove = document.getElementById(clickBack[clickBack.length - 1].moveId);
-        let lastClickCount = clickBack[clickBack.length - 1].moveCount;
-        console.log('read clickBack:', lastClickMove.id, lastClickCount)
-        //alert('clickBack ' + JSON.stringify(clickBack[clickBack.length - 1]))
-        lastClickMove.onmouseup();
-        
-        
-        
-        /*try {
-          //nextVariation += 2;
-          document.getElementById('v_text').childNodes[20].click();
-          //alert('try next variotion')
-          clickBack.push({moveId: lastClickMove, moveCount: lastClickCount});
-        } catch(e) {
-          document.getElementById('v_text').childNodes[0].click();
-          //nextVariation = 0;
-          //alert('failed next variation')
-          // experiment
-          //clickBack.pop();
-        }*/
-              
+      let lastClickCount = clickBack[clickBack.length - 1].moveCount;
+      
+      
+      readCount++;
+      console.log('read clickBack:', lastClickMove.id, lastClickCount, 'read', readCount)
+      //alert('clickBack ' + JSON.stringify(clickBack[clickBack.length - 1]))
+      lastClickMove.onmouseup();
+      
+      // get current variation index
+      let currentVariation = 0;
+      document.getElementById('v_text').childNodes.forEach((item, index) => {
+        try {
+        if (item.style.backgroundColor == 'rgb(49, 106, 197)') currentVariation = index;
+        } catch(e) {}
+      });
+      
+      try {
+        currentVariation += 2
+        document.getElementById('v_text').childNodes[currentVariation].click();
+        console.log('side variation', currentVariation)
+        //clickBack.push({moveId: lastClickMove, moveCount: lastClickCount});
+      } catch(e) {
         document.getElementById('v_text').childNodes[0].click();
-        
-        //if ((count == document.getElementById('m_text').childNodes.length) && document.getElementById('v_text').childNodes.length > 1) alert(document.getElementById('v_text').childNodes.length);
-        
-        count = lastClickCount + 1;
-        move = moveList.childNodes[count];
-        
-        TXT.value += '\n';
         clickBack.pop();
+        console.log('end of side variations')
+      }
+      
+      // only first variation
+      //document.getElementById('v_text').childNodes[0].click();
+      //clickBack.pop();     
+      
+      count = lastClickCount + 1;
+      move = moveList.childNodes[count];
+      
+      TXT.value += '\n';
+        
         
         
         // hack
@@ -3733,8 +3747,10 @@
           
           if (variation.id != undefined && variation.id != document.getElementById('v_text').childNodes[0].id) {
             clickBack.push({moveId: move.id, moveCount: count});
-            console.log('store move:', move.id, count);
-              
+            
+            storeCount++;
+            console.log('store move:', move.id, count, 'store', storeCount);
+            
             
             //oldCount = count;
             variation.click();
