@@ -3621,39 +3621,93 @@
   document.write('<button onclick="UBB2TXT();" style="position: relative; top: 350px; left: 395px; height: 35px; font-size: 16px" >UBB to TXT</button>');
   document.write('<textarea id="txt" style="position: absolute; top: 390px; left: 500px; width: 855px; height: 260px;" placeholder="converted game would be displayed here..."></textarea>');
 
-  var clickBack = '';   // move where variation occurred
-  var oldCount = 0;     // count to resume move list from
   var clickBack = [];   // resume move
-  var nextVariation = 2;
   
   function process(count) {
-    let moveList = document.getElementById('m_text');
-    let move = moveList.childNodes[count];
+    var moveList = document.getElementById('m_text');
+    var move = moveList.childNodes[count];
     
-    // end of variation/game
+    // end of variation/game  //
     if (move == undefined && clickBack.length) {
-      let lastClick = document.getElementById(clickBack[clickBack.length - 1])
-      lastClick.onmouseup();
-      clickBack.pop();
+      let lastClickMove = document.getElementById(clickBack[clickBack.length - 1].moveId);
+      let lastClickCount = clickBack[clickBack.length - 1].moveCount;
+      console.log('read clickBack:', lastClickMove.id, lastClickCount)
+      //alert('clickBack ' + JSON.stringify(clickBack[clickBack.length - 1]))
+      lastClickMove.onmouseup();
       
-      try {
-        nextVariation += 2;
-        document.getElementById('v_text').childNodes[nextVariation].click();
-        clickBack.push(lastClick.id);
+      
+      
+      /*try {
+        //nextVariation += 2;
+        document.getElementById('v_text').childNodes[20].click();
+        //alert('try next variotion')
+        clickBack.push({moveId: lastClickMove, moveCount: lastClickCount});
       } catch(e) {
         document.getElementById('v_text').childNodes[0].click();
-        nextVariation = 0;
-      }
+        //nextVariation = 0;
+        //alert('failed next variation')
+        // experiment
+        //clickBack.pop();
+      }*/
+            
+      document.getElementById('v_text').childNodes[0].click();
       
-      //document.getElementById('v_text').childNodes[0].click();
+      //if ((count == document.getElementById('m_text').childNodes.length) && document.getElementById('v_text').childNodes.length > 1) alert(document.getElementById('v_text').childNodes.length);
       
-      count = oldCount + 1;
+      count = lastClickCount + 1;
       move = moveList.childNodes[count];
       
       TXT.value += '\n';
+      clickBack.pop();
     }
 
-    if (move == undefined) return;
+    if (move == undefined) {
+      if (clickBack.length == 0) {
+        console.log('end of game', clickBack);
+        return;
+      } else {
+        console.log('error: game should continue...', clickBack);
+        console.log('it sucks:', move, count, 'movelist:', document.getElementById('m_text').childNodes)
+        
+        //hack
+        
+        
+        let lastClickMove = document.getElementById(clickBack[clickBack.length - 1].moveId);
+        let lastClickCount = clickBack[clickBack.length - 1].moveCount;
+        console.log('read clickBack:', lastClickMove.id, lastClickCount)
+        //alert('clickBack ' + JSON.stringify(clickBack[clickBack.length - 1]))
+        lastClickMove.onmouseup();
+        
+        
+        
+        /*try {
+          //nextVariation += 2;
+          document.getElementById('v_text').childNodes[20].click();
+          //alert('try next variotion')
+          clickBack.push({moveId: lastClickMove, moveCount: lastClickCount});
+        } catch(e) {
+          document.getElementById('v_text').childNodes[0].click();
+          //nextVariation = 0;
+          //alert('failed next variation')
+          // experiment
+          //clickBack.pop();
+        }*/
+              
+        document.getElementById('v_text').childNodes[0].click();
+        
+        //if ((count == document.getElementById('m_text').childNodes.length) && document.getElementById('v_text').childNodes.length > 1) alert(document.getElementById('v_text').childNodes.length);
+        
+        count = lastClickCount + 1;
+        move = moveList.childNodes[count];
+        
+        TXT.value += '\n';
+        clickBack.pop();
+        
+        
+        // hack
+      }
+    };
+
     if (move.id && move.id != 'move_0') {
       move.onmouseup();
       
@@ -3678,8 +3732,11 @@
           let variation = moveVariations[variationCount];
           
           if (variation.id != undefined && variation.id != document.getElementById('v_text').childNodes[0].id) {
-            clickBack.push(move.id);
-            oldCount = count;
+            clickBack.push({moveId: move.id, moveCount: count});
+            console.log('store move:', move.id, count);
+              
+            
+            //oldCount = count;
             variation.click();
         
             TXT.value += '\n';
@@ -3699,7 +3756,7 @@
     
     setTimeout(function() {
       process(count + 1);
-    }, 100);
+    }, 0);
   }
 
   function UBB2TXT() {
