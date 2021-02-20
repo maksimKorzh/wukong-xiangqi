@@ -3624,6 +3624,7 @@
   var clickBack = [];   // resume move
   var storeCount = 0;
   var readCount = 0;
+  const VARIATIONS = [0, 0, 0, 'b', 0, 'c', 0, 'd', 0, 'e', 0, 'f', 0, 'g', 0, 'h', 0, 'i', 0, 'j', 0, 'k'];
   
   function process(count) {
     var moveList = document.getElementById('m_text');
@@ -3651,6 +3652,7 @@
       try {
         currentVariation += 2
         document.getElementById('v_text').childNodes[currentVariation].click();
+        TXT.value += '\n ' + VARIATIONS[currentVariation - 1] + '. ';
         let mId = document.getElementById('v_text').childNodes[currentVariation].id.split('var_')[1];
         let moveNumber = document.getElementById('m_' + mId.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('');
         let moveText = document.getElementById('m_' + mId.split('_')[1] + '_m').innerHTML;
@@ -3702,6 +3704,7 @@
         try {
           currentVariation += 2
           document.getElementById('v_text').childNodes[currentVariation].click();
+          TXT.value += '\n ' + VARIATIONS[currentVariation - 1] + '. ';
           let mId = document.getElementById('v_text').childNodes[currentVariation].id.split('var_')[1];
           let moveNumber = document.getElementById('m_' + mId.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('');
           let moveText = document.getElementById('m_' + mId.split('_')[1] + '_m').innerHTML;
@@ -3749,7 +3752,7 @@
             //oldCount = count;
             variation.click();
         
-            TXT.value += '\n';
+            TXT.value += '\n a. ';
             
             let moveNumber = document.getElementById('m_' + move.id.split('_')[1] + '_n').innerHTML.split('&nbsp;').join('');
             let moveText = document.getElementById('m_' + move.id.split('_')[1] + '_m').innerHTML;
