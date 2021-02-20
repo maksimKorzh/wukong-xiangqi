@@ -3612,33 +3612,31 @@
   /****************************\
    ============================
  
-          UBB to TXT parser
+         UBB to TXT parser
 
    ============================              
   \****************************/
   
+  // add view elements
   document.write('<textarea id="ubb" style="position: absolute; top: 0px; left: 500px; width: 855px; height: 380px;" placeholder="paste UBB game here..."></textarea>');
   document.write('<button onclick="UBB2TXT();" style="position: relative; top: 350px; left: 395px; height: 35px; font-size: 16px" >UBB to TXT</button>');
   document.write('<textarea id="txt" style="position: absolute; top: 390px; left: 500px; width: 855px; height: 260px;" placeholder="converted game would be displayed here..."></textarea>');
 
-  var clickBack = [];   // resume move
-  var storeCount = 0;
-  var readCount = 0;
+  // stack
+  var clickBack = [];
+  
+  // map variation number to letters
   const VARIATIONS = [0, 0, 0, 'b', 0, 'c', 0, 'd', 0, 'e', 0, 'f', 0, 'g', 0, 'h', 0, 'i', 0, 'j', 0, 'k'];
   
+  // walk through all variations
   function process(count) {
     var moveList = document.getElementById('m_text');
     var move = moveList.childNodes[count];
     
-    // end of variation/game  //
+    // end of variation/game
     if (move == undefined && clickBack.length) {
       let lastClickMove = document.getElementById(clickBack[clickBack.length - 1].moveId);
       let lastClickCount = clickBack[clickBack.length - 1].moveCount;
-      
-      
-      //readCount++;
-      console.log('read clickBack:', lastClickMove.id, lastClickCount, 'read', readCount)
-      //alert('clickBack ' + JSON.stringify(clickBack[clickBack.length - 1]))
       lastClickMove.onmouseup();
       
       // get current variation index
@@ -3649,6 +3647,7 @@
         } catch(e) {}
       });
       
+      // click next variation
       try {
         currentVariation += 2
         document.getElementById('v_text').childNodes[currentVariation].click();
@@ -3661,12 +3660,7 @@
       } catch(e) {
         document.getElementById('v_text').childNodes[0].click();
         clickBack.pop();
-        //console.log('end of side variations')
       }
-      
-      // only first variation
-      //document.getElementById('v_text').childNodes[0].click();
-      //clickBack.pop();     
       
       count = lastClickCount + 1;
       move = moveList.childNodes[count];
@@ -3676,21 +3670,11 @@
 
     if (move == undefined) {
       if (clickBack.length == 0) {
-        console.log('end of game', clickBack);
+        //console.log('end of game', clickBack);
         return;
       } else {
-        //console.log('error: game should continue...', clickBack);
-        //console.log('it sucks:', move, count, 'movelist:', document.getElementById('m_text').childNodes)
-        //alert('sucks')
-        
-        //hack
         let lastClickMove = document.getElementById(clickBack[clickBack.length - 1].moveId);
         let lastClickCount = clickBack[clickBack.length - 1].moveCount;
-        
-        
-        //readCount++;
-        console.log('read clickBack:', lastClickMove.id, lastClickCount, 'read', readCount)
-        //alert('clickBack ' + JSON.stringify(clickBack[clickBack.length - 1]))
         lastClickMove.onmouseup();
         
         // get current variation index
@@ -3701,6 +3685,7 @@
           } catch(e) {}
         });
         
+        // click next variation
         try {
           currentVariation += 2
           document.getElementById('v_text').childNodes[currentVariation].click();
@@ -3713,18 +3698,12 @@
         } catch(e) {
           document.getElementById('v_text').childNodes[0].click();
           clickBack.pop();
-          //console.log('end of side variations')
         }
-      
-        // only first variation
-        //document.getElementById('v_text').childNodes[0].click();
-        //clickBack.pop();     
         
         count = lastClickCount + 1;
         move = moveList.childNodes[count];
         
         TXT.value += '\n';
-        // hack
       }
     };
 
@@ -3744,12 +3723,8 @@
           
           if (variation.id != undefined && variation.id != document.getElementById('v_text').childNodes[0].id) {
             clickBack.push({moveId: move.id, moveCount: count});
-            
-            storeCount++;
-            console.log('store move:', move.id, count, 'store', storeCount);
-            
-            
-            //oldCount = count;
+                        
+            // click first variation
             variation.click();
         
             TXT.value += '\n a. ';
@@ -3759,7 +3734,6 @@
             let moveComment = document.getElementById('c_text').value.split('\n\n').join('');
             
             TXT.value += moveNumber + moveText + ' ' + (moveComment ? '\n' + moveComment + '\n\n' : '\n');
-            //console.log('HIT VARIATION', node.id)
             break;
             
           }
