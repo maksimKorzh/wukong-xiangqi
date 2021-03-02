@@ -43,6 +43,9 @@
 
   // active color
   var sideToMove = 'r';
+  
+  // unique position ID
+  var hashKey = 0;
 
   // print GUI board
   function printBoard() {
@@ -59,7 +62,8 @@
     }
     
     boardString += '\n   a b c d e f g h i\n';
-    boardString += '\n   Side to move: ' + sideToMove
+    boardString += '\n   Side to move: ' + sideToMove;
+    boardString += '\n   hash key: ' + hashKey;
     
     console.log(boardString);
   }
@@ -75,6 +79,9 @@
 
     // reset side to move
     sideToMove = '';
+    
+    // reset hash key
+    hashKey = 0;
   }
 
   // set GUI board position from FEN string
@@ -114,6 +121,9 @@
     // parse side to move
     index++;
     sideToMove = fen[index];
+    
+    // update hash key
+    hashKey = generateHashKey();
   }
 
   // convert GUI board position to FEN string
@@ -145,7 +155,108 @@
 
     fen += ' ' + (sideToMove == 'b' ? 'b' : 'w');
     fen += ' ' + '- - 0 1'
+    
     return fen;
+  }
+
+  
+  /****************************\
+   ============================
+ 
+      RANDOM NUMBER GENERATOR
+ 
+   ============================              
+  \****************************/
+    
+  // fixed random seed
+  var randomState = 1804289383;
+
+  // generate 32-bit pseudo legal numbers
+  function random() {
+    var number = randomState;
+    
+    // 32-bit XOR shift
+    number ^= number << 13;
+    number ^= number >> 17;
+    number ^= number << 5;
+    randomState = number;
+
+    return number;
+  }
+
+  
+  /****************************\
+   ============================
+   
+          ZOBRIST HASHING
+
+   ============================              
+  \****************************/
+  
+  // piece encoding
+  const EMPTY = 0;
+  const RED_PAWN = 1;
+  const RED_ADVISOR = 2;
+  const RED_BISHOP = 3;
+  const RED_KNIGHT = 4;
+  const RED_CANNON = 5;
+  const RED_ROOK = 6;
+  const RED_KING = 7;
+  const BLACK_PAWN = 8;
+  const BLACK_ADVISOR = 9;
+  const BLACK_BISHOP = 10;
+  const BLACK_KNIGHT = 11;
+  const BLACK_CANNON = 12;
+  const BLACK_ROOK = 13;
+  const BLACK_KING = 14;
+  const OFFBOARD = 15;
+  
+  // encode ascii pieces
+  const CHAR_TO_PIECE = {
+    'P': BLACK_PAWN,
+    'A': BLACK_ADVISOR,
+    'B': BLACK_BISHOP, 'E': BLACK_BISHOP,
+    'N': BLACK_KNIGHT, 'H': BLACK_BISHOP,
+    'C': BLACK_CANNON,
+    'R': BLACK_ROOK,
+    'K': BLACK_KING,
+    
+    'p': RED_PAWN,
+    'a': RED_ADVISOR,
+    'b': RED_BISHOP, 'e': RED_BISHOP,
+    'n': RED_KNIGHT, 'h': RED_KNIGHT,
+    'c': RED_CANNON,
+    'r': RED_ROOK,
+    'k': RED_KING
+  };
+ 
+  // random keys
+  var pieceKeys = new Array(15 * 90); // (number of piece types + 1) * number of board squares
+  var sideKey;
+  
+  // init random hash keys
+  function initRandomKeys() {
+    for (var index = 0; index < pieceKeys.length; index++) pieceKeys[index] = random();
+    sideKey = random();
+  }
+  
+  // generate hash key
+  function generateHashKey() {
+    var finalKey = 0;
+    
+    // hash board position
+    for (let rank = 0; rank < 10; rank++) {
+      for (let file = 0; file < 9; file++) {
+        let square = rank * 9 + file;
+        let piece = CHAR_TO_PIECE[Board[rank][file]];
+        if (piece != EMPTY) finalKey ^= pieceKeys[(piece * 90) + square];
+      }
+    }
+    
+    // hash board state variables
+    if (sideToMove == 'r') finalKey ^= sideKey;
+    
+    return finalKey;
   }
 
 
@@ -157,7 +268,13 @@
    ============================              
   \****************************/
 
+  // init array of pseudo random numbers for Zobrizt hashing
+  initRandomKeys();
+
   console.log('Hardcoded board position');
+  
+  // manually generating hash key (it gets updated in parseFen() automatically)
+  hashKey = generateHashKey();
   printBoard();
   
   // parse/generate FEN
@@ -170,4 +287,16 @@
     console.log('  verification: ', fen);
     console.log('      verified: ', generateFen() == fen);
   }
+  
+  // NOTE: hash key needs to be either incrementally updated
+  //       or generated from scratch every time the board position
+  //       has changed. Assuming that in GUI there's no need to handle
+  //       millions of positions per second calling hashKey = generateHashKey()
+  //       is literally enough. It take care of hashing both - board position
+  //       and side to move automatically. Later hash keys can be stored into
+  //       a repetition table every time move is made on board and the matter
+  //       of repetition detection is simply the matter of inding duplicating
+  //       hash keys within repetition table. The number of duplications is now
+  //       the number of repetitions - 1, 2, 3 fold etc.
+
 </script>
