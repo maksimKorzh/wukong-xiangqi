@@ -17,7 +17,7 @@
 <h3 align="center">Embedded apps</h3>
 <p align="center"><a href="https://maksimkorzh.github.io/interactive-xiangqi-apps/apps/embed.html">Interactive Xiangqi diagrams</a></p>
 <hr>
-<h3 align="center">Cross-platform desktop app</h3>
+<h3 align="center">Cross-platform desktop Xiangqi GUI</h3>
 <p align="center"><a href="https://github.com/maksimKorzh/ccbridge-js">CCBridge JS</a></p>
 <hr>
 <h3 align="center">Games DB & Utils</h3>
