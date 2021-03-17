@@ -7,6 +7,13 @@
 <h4 align="center">by</h4>
 <h4 align="center">Code Monkey King</h4>
 <hr>
+<h3 align="center">Wukong in 3rd party websites</h3>
+<p align="center">
+  <a href="https://play.xiangqi.com/game/computer">xiangqi.com</a> |
+  <a href="https://xqinenglish.com">xqinenglish.com</a>
+</p>
+<hr>
+<hr>
 <h3 align="center">Standalone apps</h3>
 <p align="center">
   <a href="https://maksimkorzh.github.io/wukong-xiangqi/src/gui/xiangqi.html">Play online</a> |
